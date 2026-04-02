@@ -1,0 +1,2757 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<title>FlowTYM — E-Réputation</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── NEW DESIGN TOKENS (Linear / Superhuman style) ──────────────────── */
+/* Override all old vars with new refined palette */
+:root{
+  /* Primary — refined indigo-blue (Linear-style) */
+  --p9:#0D1340;--p8:#162060;--p7:#1E2F8A;--p6:#2D3FBF;--p5:#4361EE;
+  --p4:#7B90F8;--p1:#EEF1FD;--p0:#F5F7FE;
+  /* Emerald */
+  --t5:#059669;--t4:#10B981;--t1:#D1FAE5;--t0:#ECFDF5;
+  /* Surface & background */
+  --bg:#F7F8FC;--surf:#FFFFFF;
+  /* Text */
+  --tx9:#0F172A;--tx6:#475569;--tx4:#94A3B8;--tx3:#CBD5E1;
+  /* Border */
+  --bdr:#E2E8F0;--bdr2:#F1F5F9;
+  /* Semantic colours */
+  --amber:#D97706;--rose:#DC2626;--green:#059669;--blue:#2563EB;
+  --amber-bg:#FFFBEB;--amber-bdr:#FDE68A;
+  --rose-bg:#FEF2F2;--rose-bdr:#FECACA;
+  --blue-bg:#EFF6FF;--blue-bdr:#BFDBFE;
+  --orange:#EA580C;--orange-bg:#FFF7ED;--orange-bdr:#FED7AA;
+  /* Shadows */
+  --sh-xs:0 1px 2px rgba(15,23,42,.04);
+  --sh-sm:0 1px 3px rgba(15,23,42,.06),0 4px 12px rgba(15,23,42,.06);
+  --sh-md:0 4px 6px rgba(15,23,42,.04),0 10px 28px rgba(15,23,42,.09);
+  --sh-lg:0 8px 16px rgba(15,23,42,.06),0 20px 48px rgba(15,23,42,.12);
+  --sh-panel:-4px 0 40px rgba(15,23,42,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  background:linear-gradient(160deg,#F8F9FC 0%,#F1F3F9 100%);
+  background-attachment:fixed;
+  color:var(--tx9);min-height:100vh;display:flex;flex-direction:column;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--tx3);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--tx4)}
+
+/* HEADER */
+.hdr{
+  background:rgba(13,19,64,.97);
+  backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  box-shadow:0 1px 0 rgba(255,255,255,.04),0 4px 20px rgba(15,23,42,.28);
+  position:sticky;top:0;z-index:50;height:52px;
+}
+.logo-f{color:#fff;font-weight:700;letter-spacing:-.7px;font-size:16px}
+.logo-t{background:linear-gradient(135deg,#34D399,#10B981);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.np{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;font-size:12px;font-weight:500;letter-spacing:-.01em;color:rgba(255,255,255,.55);cursor:pointer;transition:all .15s ease;background:none;border:none;position:relative}
+.np:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.9)}
+.np.act{background:rgba(255,255,255,.1);color:#fff}
+.np.mact{background:rgba(255,255,255,.14);color:#fff}
+/* ═══ MODULE NAVBAR ═══ */
+.mnav{
+  background:rgba(13,19,64,.97);
+  backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  position:sticky;top:52px;z-index:45;height:42px;
+  display:flex;align-items:center;
+  overflow-x:auto;
+  padding:0 18px;
+  gap:2px;
+}
+.mnav::-webkit-scrollbar{display:none}
+.mi{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 11px;border-radius:6px;
+  font-size:12px;font-weight:500;
+  color:rgba(255,255,255,.55);
+  cursor:pointer;transition:all .15s ease;
+  background:none;border:none;white-space:nowrap;
+  font-family:'Inter',sans-serif;
+  letter-spacing:-.01em;
+}
+.mi:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.9)}
+.mi.mact{background:rgba(255,255,255,.14);color:#fff}
+.mi svg{flex-shrink:0;opacity:.8}
+.mi.mact svg{opacity:1}
+/* Hamburger — mobile only */
+.mhbg{
+  display:none;background:none;border:none;cursor:pointer;
+  color:rgba(255,255,255,.7);padding:6px;border-radius:6px;
+  margin-left:auto;
+}
+.mhbg:hover{background:rgba(255,255,255,.1);color:#fff}
+/* Mobile drawer */
+.mdrawer{
+  position:fixed;inset:0;z-index:200;
+  display:flex;visibility:hidden;
+}
+.mdrawer.open{visibility:visible}
+.mdrawer-overlay{
+  position:absolute;inset:0;background:rgba(0,0,0,.5);
+  opacity:0;transition:opacity .25s ease;
+  backdrop-filter:blur(4px);
+}
+.mdrawer.open .mdrawer-overlay{opacity:1}
+.mdrawer-panel{
+  position:relative;z-index:1;
+  width:280px;max-width:90vw;
+  background:#1B1A35;
+  display:flex;flex-direction:column;
+  transform:translateX(-100%);
+  transition:transform .25s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;
+}
+.mdrawer.open .mdrawer-panel{transform:translateX(0)}
+.mdrawer-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.08);
+}
+.mdrawer-logo{color:#fff;font-weight:800;font-size:16px;letter-spacing:-.5px}
+.mdrawer-logo span{color:#00D4C8}
+.mdrawer-close{background:none;border:none;cursor:pointer;color:rgba(255,255,255,.5);padding:4px;border-radius:5px;transition:all .15s}
+.mdrawer-close:hover{background:rgba(255,255,255,.1);color:#fff}
+.mdrawer-list{padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.mdrawer-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:8px;
+  font-size:13px;font-weight:500;color:rgba(255,255,255,.6);
+  cursor:pointer;transition:all .15s ease;
+  background:none;border:none;font-family:'Inter',sans-serif;
+  width:100%;text-align:left;
+}
+.mdrawer-item:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.9)}
+.mdrawer-item.mact{background:rgba(255,255,255,.13);color:#fff}
+.mdrawer-item svg{opacity:.75;flex-shrink:0}
+.mdrawer-item.mact svg{opacity:1}
+
+@media(max-width:768px){
+  #moduleNavInline .mi:not(.mhbg){display:none!important}
+  #moduleNavInline .mhbg{display:flex!important}
+}
+
+/* Adjust layout height to account for module navbar */
+.layout{height:calc(100vh - 94px)!important}
+
+.nb{position:relative;width:30px;height:30px;border-radius:7px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.6);cursor:pointer;transition:all .15s ease}
+.nb:hover{background:rgba(255,255,255,.12);color:#fff}
+.nbdg{position:absolute;top:-3px;right:-3px;width:14px;height:14px;border-radius:50%;background:#EF4444;border:2px solid #0D1340;font-size:7.5px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center}
+
+/* LAYOUT */
+.layout{display:flex;flex:1;overflow:hidden;height:calc(100vh - 52px)}
+
+/* SIDEBAR — dark theme matching mockup */
+.sidebar{
+  width:220px;flex-shrink:0;
+  background:#1B1A35;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  border-right:none;
+}
+/* Sidebar top branding */
+.sb-brand{
+  padding:20px 18px 14px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.sb-logo{
+  font-size:18px;font-weight:800;letter-spacing:-.5px;color:#fff;
+  font-family:'Inter',sans-serif;
+  line-height:1;margin-bottom:3px;
+}
+.sb-logo span{color:#00D4C8}
+.sb-hotel{
+  font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:#7B6FA8;line-height:1.3;margin-top:5px;
+}
+/* Role chip */
+.sb-role{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 14px 10px;
+  margin:8px 10px 0;
+  border-radius:9px;
+  background:rgba(255,255,255,.05);
+  cursor:pointer;transition:background .15s ease;
+  border:none;width:calc(100% - 20px);text-align:left;font-family:inherit;
+}
+.sb-role:hover{background:rgba(255,255,255,.09)}
+.sb-role-ico{font-size:15px;flex-shrink:0}
+.sb-role-name{flex:1;font-size:12.5px;font-weight:600;color:#E2DCFF;letter-spacing:-.01em}
+.sb-role-arrow{font-size:11px;color:#7B6FA8}
+/* Nav scroll area */
+.sb-nav{flex:1;overflow-y:auto;padding:8px 10px;display:flex;flex-direction:column;gap:1px}
+.sb-nav::-webkit-scrollbar{width:3px}
+.sb-nav::-webkit-scrollbar-track{background:transparent}
+.sb-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+/* Nav item */
+.sn{
+  display:flex;align-items:center;gap:9px;
+  padding:8px 12px;border-radius:8px;
+  font-size:12.5px;font-weight:500;letter-spacing:-.01em;
+  color:rgba(255,255,255,.55);
+  cursor:pointer;transition:all .15s ease;
+  background:none;border:none;width:100%;text-align:left;
+  position:relative;font-family:'Inter',sans-serif;
+}
+.sn:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85)}
+.sn.act{
+  background:#6B21A8;color:#fff;font-weight:600;
+  box-shadow:0 2px 8px rgba(107,33,168,.4);
+}
+.sn.act::before{display:none} /* remove old left-border indicator */
+.sn svg{flex-shrink:0;opacity:.6;transition:opacity .15s}
+.sn:hover svg,.sn.act svg{opacity:1}
+.snbdg{
+  margin-left:auto;background:#EF4444;color:#fff;
+  font-size:9px;font-weight:700;padding:1px 6px;border-radius:999px;
+}
+.snbdg-amber{background:#D97706}
+/* Section expand arrow */
+.sn-arrow{margin-left:auto;font-size:10px;color:rgba(255,255,255,.3);transition:transform .2s}
+.sn-label{
+  font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.25);padding:10px 12px 4px;
+}
+/* Sidebar footer — user */
+.sb-user{
+  padding:14px 14px;
+  border-top:1px solid rgba(255,255,255,.07);
+  display:flex;align-items:center;gap:10px;
+  flex-shrink:0;
+}
+.sb-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,#00D4C8,#0891b2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:800;color:#fff;flex-shrink:0;
+  box-shadow:0 0 0 2px rgba(0,212,200,.25);
+}
+.sb-uname{font-size:12px;font-weight:700;color:#E2DCFF;line-height:1.2;letter-spacing:-.01em}
+.sb-urole{font-size:10px;font-weight:500;color:#7B6FA8;margin-top:1px}
+
+/* MAIN CONTENT */
+.main{flex:1;overflow-y:auto;padding:28px 32px;display:flex;flex-direction:column;gap:22px}
+.screen{display:none}
+.screen.act{display:flex;flex-direction:column;gap:22px;animation:fadeSlideUp .2s ease}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* PAGE TITLE */
+.ptitle{font-size:23px;font-weight:700;letter-spacing:-.6px;line-height:1.15;color:var(--tx9)}
+.ptitle .sub{color:var(--p5);font-weight:300;letter-spacing:-.2px}
+.psub{font-size:12.5px;color:var(--tx4);margin-top:4px;font-weight:400;letter-spacing:-.01em}
+
+/* CARDS */
+.card{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border:1px solid rgba(226,232,240,.9);border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(15,23,42,.05),0 4px 12px rgba(15,23,42,.05);transition:box-shadow .2s ease,transform .2s ease,border-color .2s ease}
+.card-sm{padding:16px}
+.card:hover{box-shadow:0 4px 8px rgba(15,23,42,.05),0 10px 28px rgba(15,23,42,.08);border-color:var(--tx3)}
+.card-kpi{background:#fff;border-radius:12px;padding:22px;border:1px solid var(--bdr);box-shadow:0 1px 3px rgba(15,23,42,.05),0 4px 14px rgba(15,23,42,.06);transition:box-shadow .2s ease,transform .2s ease;position:relative;overflow:hidden}
+.card-kpi:hover{box-shadow:0 4px 8px rgba(15,23,42,.05),0 12px 32px rgba(15,23,42,.1);transform:translateY(-1px)}
+.card-kpi::after{content:'';position:absolute;top:0;right:0;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(67,97,238,.04),transparent 70%);pointer-events:none}
+
+/* BADGES */
+.bdg{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:5px;font-size:10.5px;font-weight:600;letter-spacing:.01em}
+.bdg-g{background:var(--t0);color:var(--t5);border:1px solid var(--t1)}
+.bdg-b{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bdr)}
+.bdg-p{background:var(--p0);color:var(--p6);border:1px solid var(--p1)}
+.bdg-a{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-bdr)}
+.bdg-r{background:var(--rose-bg);color:var(--rose);border:1px solid var(--rose-bdr)}
+.bdg-gray{background:#F8FAFC;color:var(--tx4);border:1px solid var(--bdr)}
+.bdg-o{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-bdr)}
+
+/* KPI */
+.kpi-v{font-size:34px;font-weight:800;letter-spacing:-1.5px;color:var(--tx9);line-height:1;font-feature-settings:'tnum'}
+.kpi-u{font-size:14px;font-weight:400;color:var(--tx4);letter-spacing:-.01em}
+.kpi-lbl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--tx4)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;letter-spacing:-.01em;cursor:pointer;transition:all .15s ease;border:none;font-family:inherit}
+.btn-p{background:var(--p6);color:#fff;box-shadow:0 1px 2px rgba(45,63,191,.25),0 4px 12px rgba(45,63,191,.2)}
+.btn-p:hover{background:var(--p7);box-shadow:0 2px 4px rgba(45,63,191,.3),0 6px 16px rgba(45,63,191,.25);transform:translateY(-1px)}
+.btn-p:active{transform:none}
+.btn-o{background:#fff;color:var(--p6);border:1px solid var(--bdr);box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.btn-o:hover{background:var(--p0);border-color:var(--p4);box-shadow:0 1px 3px rgba(15,23,42,.06),0 4px 12px rgba(15,23,42,.06)}
+.btn-ghost{background:transparent;color:var(--tx6);border:1px solid var(--bdr)}
+.btn-ghost:hover{background:var(--bg);color:var(--tx9);border-color:var(--tx3)}
+.btn-danger{background:var(--rose-bg);color:var(--rose);border:1px solid var(--rose-bdr)}
+.btn-danger:hover{background:#FEE2E2}
+.btn-sm{padding:5px 11px;font-size:11.5px}
+.btn-xs{padding:3px 9px;font-size:10.5px;border-radius:6px}
+
+/* FILTER BAR */
+.fbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.fchip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:7px;border:1px solid var(--bdr);background:#fff;font-size:11.5px;font-weight:500;color:var(--tx6);cursor:pointer;transition:all .15s ease;box-shadow:0 1px 2px rgba(15,23,42,.04);letter-spacing:-.01em}
+.fchip:hover,.fchip.act{background:var(--p0);border-color:var(--p4);color:var(--p6);box-shadow:none}
+.fsync{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:6px;background:var(--t0);border:1px solid var(--t1);font-size:11px;font-weight:500;color:var(--t5);letter-spacing:-.01em}
+.fsync::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--t5);animation:pls 2s ease-in-out infinite;flex-shrink:0}
+@keyframes pls{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tx4);padding:10px 16px;text-align:left;border-bottom:1px solid var(--bdr);background:#F8FAFC}
+.tbl td{padding:12px 16px;font-size:12.5px;color:var(--tx6);border-bottom:1px solid #F1F5F9;vertical-align:middle;letter-spacing:-.01em}
+.tbl tr:hover td{background:var(--p0);cursor:pointer}
+.tbl tr:last-child td{border-bottom:none}
+
+/* PLATFORM BADGE */
+.plt{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600}
+.plt-ico{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;flex-shrink:0}
+
+/* STARS */
+.stars{color:var(--amber);font-size:11px;display:flex;align-items:center;gap:2px;font-weight:700}
+
+/* PROGRESS */
+.pbar{height:4px;border-radius:999px;background:var(--bdr);overflow:hidden}
+.pfill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--p5),var(--t4));transition:width .4s ease}
+
+/* SIDE PANEL */
+.spanel{position:fixed;top:52px;right:0;bottom:0;width:460px;background:rgba(255,255,255,.98);backdrop-filter:blur(16px);border-left:1px solid var(--bdr);box-shadow:-4px 0 40px rgba(15,23,42,.08);z-index:40;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1)}
+.spanel.open{transform:none}
+.sp-hdr{padding:18px 22px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
+.sp-body{flex:1;overflow-y:auto;padding:20px 22px}
+.sp-ftr{padding:16px 22px;border-top:1px solid var(--bdr);background:#F8FAFC}
+
+/* RADAR */
+.rscore{display:inline-flex;align-items:center;gap:3px;padding:2px 9px;border-radius:5px;font-size:11px;font-weight:700;font-feature-settings:'tnum'}
+.rs-low{background:var(--t0);color:var(--t5)}
+.rs-med{background:var(--amber-bg);color:var(--amber)}
+.rs-hi{background:var(--rose-bg);color:var(--rose)}
+
+/* PLATFORM CARDS */
+.plt-card{background:#fff;border:1px solid var(--bdr);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:14px;transition:all .2s ease;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.plt-card:hover{box-shadow:0 4px 8px rgba(15,23,42,.05),0 12px 32px rgba(15,23,42,.1);transform:translateY(-2px);border-color:var(--tx3)}
+.plt-card.connected{border-color:var(--t1);background:linear-gradient(160deg,#fff,#FAFFFE)}
+.plt-logo{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800}
+
+/* ALERT ITEMS */
+.ali{display:flex;align-items:flex-start;gap:12px;border-radius:10px;padding:12px 14px;border:1px solid transparent;transition:filter .15s}
+.ali:hover{filter:brightness(.97)}
+.ai-ico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+
+/* REVIEW ITEM */
+.revi{display:flex;align-items:flex-start;gap:11px;background:#F8FAFC;border:1px solid var(--bdr);border-radius:10px;padding:12px 14px;transition:all .18s ease}
+.revi:hover{background:var(--p0);border-color:var(--p4);box-shadow:0 1px 3px rgba(15,23,42,.05),0 4px 12px rgba(15,23,42,.05)}
+
+/* TOGGLE */
+.tog{position:relative;width:34px;height:19px;flex-shrink:0}
+.tog input{opacity:0;width:0;height:0}
+.tog-sl{position:absolute;inset:0;border-radius:999px;background:var(--tx3);cursor:pointer;transition:background .2s ease}
+.tog-sl::before{content:'';position:absolute;left:2px;top:2px;width:15px;height:15px;border-radius:50%;background:#fff;transition:transform .2s ease;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.tog input:checked+.tog-sl{background:var(--t4)}
+.tog input:checked+.tog-sl::before{transform:translateX(15px)}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.3);backdrop-filter:blur(6px);z-index:60;display:none;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:16px;padding:28px;width:500px;max-width:95vw;box-shadow:0 24px 64px rgba(15,23,42,.18);border:1px solid var(--bdr)}
+
+/* INPUT */
+.inp{width:100%;padding:8px 12px;border:1px solid var(--bdr);border-radius:8px;font-size:13px;font-family:inherit;color:var(--tx9);background:#F8FAFC;transition:all .15s ease;letter-spacing:-.01em}
+.inp:focus{outline:none;border-color:var(--p5);background:#fff;box-shadow:0 0 0 3px rgba(67,97,238,.1)}
+textarea.inp{resize:vertical;min-height:90px;line-height:1.55}
+.inp-label{font-size:11px;font-weight:600;color:var(--tx6);margin-bottom:5px;letter-spacing:-.01em}
+select.inp{cursor:pointer}
+
+/* OTA WIDGET */
+.ota-w{background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border:1px solid var(--bdr);border-radius:14px;padding:16px 18px;box-shadow:0 8px 16px rgba(15,23,42,.06),0 20px 48px rgba(15,23,42,.12);display:flex;align-items:center;gap:16px}
+
+/* LINK BTN */
+.lnk{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;color:var(--p5);cursor:pointer;background:none;border:none;font-family:inherit;transition:all .15s ease;padding:0;letter-spacing:-.01em}
+.lnk:hover{color:var(--p7);gap:6px}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.gc2{display:grid;grid-template-columns:2fr 1fr;gap:18px}
+
+/* DIVIDER */
+hr{border:none;border-top:1px solid var(--bdr);margin:10px 0}
+
+/* TAG */
+.tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+
+/* Notification dot */
+.dot-g{width:6px;height:6px;border-radius:50%;background:var(--t4)}
+.dot-r{width:6px;height:6px;border-radius:50%;background:#EF4444}
+.dot-a{width:6px;height:6px;border-radius:50%;background:var(--amber)}
+
+@media(max-width:900px){
+  .sidebar{display:none}
+  .g3{grid-template-columns:1fr}
+  .gc2{grid-template-columns:1fr}
+  .g2{grid-template-columns:1fr}
+}
+
+/* ── INTEGRITY MODULE ─────────────────────────────────────── */
+.int-metric{background:#fff;border-radius:14px;border:1px solid var(--bdr);padding:22px 22px 18px;box-shadow:0 1px 3px rgba(15,23,42,.05),0 4px 12px rgba(15,23,42,.05);transition:transform .2s ease,box-shadow .2s ease;position:relative;overflow:hidden}
+.int-metric:hover{transform:translateY(-2px);box-shadow:0 4px 8px rgba(15,23,42,.06),0 12px 28px rgba(15,23,42,.1)}
+.int-metric .label{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx4)}
+.int-metric .value{font-size:36px;font-weight:800;letter-spacing:-2px;line-height:1;margin:8px 0 0;font-feature-settings:'tnum'}
+.int-metric .ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;position:absolute;top:20px;right:20px}
+.int-period{display:flex;background:#fff;border:1px solid var(--bdr);border-radius:8px;padding:3px;width:fit-content;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.int-period button{padding:5px 16px;border-radius:6px;font-size:11.5px;font-weight:500;border:none;background:transparent;color:var(--tx4);cursor:pointer;transition:all .15s ease;font-family:inherit}
+.int-period button.act{background:var(--tx9);color:#fff;box-shadow:0 1px 3px rgba(15,23,42,.15)}
+.int-tbl{width:100%;border-collapse:collapse}
+.int-tbl th{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx4);padding:11px 16px;text-align:left;border-bottom:1px solid var(--bdr);white-space:nowrap;background:#F8FAFC}
+.int-tbl td{padding:13px 16px;font-size:12.5px;vertical-align:middle;border-bottom:1px solid #F1F5F9}
+.int-tbl tr.row-red td{background:#FFF5F5}
+.int-tbl tr.row-amber td{background:#FFFBF0}
+.int-tbl tr:hover td{background:var(--p0);cursor:pointer}
+.int-tbl tr:last-child td{border-bottom:none}
+.int-trust-bar{height:6px;border-radius:999px;background:var(--bdr);overflow:hidden;width:80px}
+.int-trust-fill{height:100%;border-radius:999px}
+.int-tag{font-size:10px;padding:2px 8px;background:#F1F5F9;border-radius:999px;color:var(--tx6);white-space:nowrap;font-weight:500}
+.int-pill{font-size:10px;padding:2px 8px;border-radius:999px;font-weight:600;letter-spacing:.01em}
+.int-pill.suspect{background:#FEE2E2;color:#DC2626}
+.int-pill.encours{background:#FEF3C7;color:#D97706}
+.int-pill.ignore{background:#F1F5F9;color:#64748B}
+/* DRAWER */
+.int-drawer{position:fixed;top:52px;right:0;bottom:0;width:420px;background:#fff;box-shadow:-4px 0 40px rgba(15,23,42,.1);z-index:40;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);border-left:1px solid var(--bdr)}
+.int-drawer.open{transform:none}
+.int-overlay{position:fixed;inset:0;background:rgba(15,23,42,.25);backdrop-filter:blur(2px);z-index:39;display:none}
+.int-overlay.open{display:block}
+
+/* ── RADAR PANEL ─────────────────────────────────────────── */
+.radar-panel{position:fixed;top:52px;right:0;bottom:0;width:460px;background:#fff;box-shadow:-4px 0 40px rgba(15,23,42,.1);z-index:44;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);border-left:1px solid var(--bdr)}
+.radar-panel.open{transform:none}
+.radar-overlay{position:fixed;inset:0;background:rgba(15,23,42,.25);backdrop-filter:blur(2px);z-index:43;display:none}
+.radar-overlay.open{display:block}
+.rp-sev-bar{height:3px;border-radius:0;margin-bottom:0}
+.rp-ai-box{background:linear-gradient(135deg,var(--p0),var(--t0));border:1px solid var(--p1);border-radius:12px;padding:14px 16px;font-size:12px;color:var(--tx6);line-height:1.7}
+.rp-src-item{display:flex;align-items:flex-start;gap:10px;background:#F8FAFC;border:1px solid var(--bdr);border-radius:9px;padding:12px 14px;font-size:12px}
+.rp-src-ico{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:1px}
+.rp-bar{height:5px;border-radius:999px;background:var(--bdr);overflow:hidden;flex:1;margin-top:5px}
+.rp-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--p5),var(--t4))}
+.rp-hist-item{display:flex;gap:10px;align-items:flex-start;font-size:12px}
+.rp-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.rp-line{width:1px;background:var(--bdr);flex-shrink:0;min-height:20px;margin-left:3px}
+
+/* ── TASK CREATION MODAL ─────────────────────────────────── */
+.modal-task{background:#fff;border-radius:16px;width:540px;max-width:95vw;box-shadow:0 24px 64px rgba(15,23,42,.18);border:1px solid var(--bdr);overflow:hidden}
+.mt-zone1{padding:22px 24px;border-bottom:1px solid var(--bdr)}
+.mt-zone2{padding:16px 24px;background:#F8FAFC;border-bottom:1px solid var(--bdr)}
+.mt-zone3{padding:16px 24px;display:flex;align-items:center;justify-content:flex-end;gap:8px}
+.mt-field{display:flex;flex-direction:column;gap:4px;margin-bottom:14px}
+.mt-field:last-child{margin-bottom:0}
+.mt-label{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--tx4)}
+.mt-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.prio-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:7px;border:1.5px solid var(--bdr);background:#fff;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s ease;font-family:inherit;color:var(--tx6)}
+.prio-btn.sel{border-color:currentColor;box-shadow:inset 0 0 0 1px currentColor}
+.prio-btn[data-p="critical"]{color:var(--rose)}
+.prio-btn[data-p="high"]{color:var(--orange)}
+.prio-btn[data-p="medium"]{color:var(--amber)}
+.prio-btn[data-p="low"]{color:var(--t5)}
+.dept-chip-sel{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;border:1.5px solid var(--p4);background:var(--p0);font-size:12px;font-weight:600;color:var(--p6)}
+.mt-ai-summary{font-size:11.5px;color:var(--tx6);line-height:1.6}
+.mt-ai-row{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--tx6);margin-bottom:5px}
+.mt-ai-row:last-child{margin-bottom:0}
+.mt-ai-key{color:var(--tx4);min-width:100px;font-size:11px}
+.mt-task-id{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--tx4);background:#F1F5F9;padding:2px 8px;border-radius:4px}
+
+/* Severity accent line for panel header */
+.sev-accent-critical{background:var(--rose)}
+.sev-accent-medium{background:var(--amber)}
+.sev-accent-high{background:var(--orange)}
+.sev-accent-low{background:var(--t4)}
+/* Rules */
+.int-rule{display:flex;align-items:center;justify-content:space-between;background:#F8FAFC;border:1px solid var(--bdr);border-radius:10px;padding:14px 16px}
+.int-toggle{position:relative;width:38px;height:22px;flex-shrink:0}
+.int-toggle input{opacity:0;width:0;height:0}
+.int-toggle-sl{position:absolute;inset:0;border-radius:999px;background:var(--tx3);cursor:pointer;transition:background .2s}
+.int-toggle-sl::before{content:'';position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.int-toggle input:checked + .int-toggle-sl{background:var(--t4)}
+.int-toggle input:checked + .int-toggle-sl::before{transform:translateX(16px)}
+
+/* ── E-REP HORIZONTAL NAV ─────────────────────────────────── */
+.erep-hnav {
+  background: #1B1A35;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 42px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.erep-hnav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: rgba(255,255,255,.5);
+  cursor: pointer;
+  transition: all .15s ease;
+  background: none;
+  border: none;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.erep-hnav-btn:hover {
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.85);
+}
+.erep-hnav-btn.act {
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  font-weight: 600;
+}
+.erep-hnav-btn svg {
+  opacity: 0.7;
+}
+.erep-hnav-btn:hover svg,
+.erep-hnav-btn.act svg {
+  opacity: 1;
+}
+.erep-hnav-sep {
+  width: 1px;
+  height: 20px;
+  background: rgba(255,255,255,.1);
+  margin: 0 6px;
+}
+/* Remove old sidebar */
+.sidebar { display: none !important; }
+.layout { height: calc(100vh - 42px) !important; }
+.hdr { display: none !important; }
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+<!-- ═══ E-REP HORIZONTAL NAV ═══ -->
+<nav class="erep-hnav" id="erepHnav">
+  <button class="erep-hnav-btn act" onclick="nav('dashboard')" data-tab="dashboard">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Dashboard
+  </button>
+  <button class="erep-hnav-btn" onclick="nav('inbox')" data-tab="inbox">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+    Inbox
+  </button>
+  <button class="erep-hnav-btn" onclick="nav('radar')" data-tab="radar">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M6.3 6.3a8 8 0 000 11.4M17.7 6.3a8 8 0 010 11.4M3.5 3.5a12.7 12.7 0 000 17M20.5 3.5a12.7 12.7 0 010 17"/></svg>
+    Radar
+  </button>
+  <button class="erep-hnav-btn" onclick="nav('booster')" data-tab="booster">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    Booster
+  </button>
+  <button class="erep-hnav-btn" onclick="nav('integrity')" data-tab="integrity">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Integrity
+  </button>
+  <button class="erep-hnav-btn" onclick="nav('campaigns')" data-tab="campaigns">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="5" height="5"/><rect x="16" y="3" width="5" height="5"/><rect x="3" y="16" width="5" height="5"/><path d="M21 16h-3a2 2 0 00-2 2v3M13 3h2M13 8h4M13 13h8M13 18v3"/></svg>
+    Campagnes
+  </button>
+  <button class="erep-hnav-btn" onclick="nav('stats')" data-tab="stats">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    Analytics
+  </button>
+  <div class="erep-hnav-sep"></div>
+  <button class="erep-hnav-btn" onclick="nav('connections')" data-tab="connections">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    Paramètres
+  </button>
+</nav>
+
+<!-- ═══ LAYOUT ═══ -->
+<div class="layout">
+
+  <!-- MAIN -->
+  <main class="main" id="mainContent" style="width:100%">
+    <div class="screen act" id="s-dashboard">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div>
+          <h1 class="ptitle">E-Réputation <span class="sub">Dashboard</span></h1>
+          <p class="psub">Vue d'ensemble de la réputation en ligne de vos établissements</p>
+        </div>
+        <div class="fbar">
+          <div class="fsync">Synchronisé il y a 5 min</div>
+          <button id="dashPeriodBtn" class="fchip" onclick="cycleDashPeriod(this)"><svg width="11" height="11" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg><span id="dashPeriodLabel">12 derniers mois</span> <svg width="9" height="9" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd"/></svg></button>
+          <button class="fchip">Tous établissements <svg width="9" height="9" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd"/></svg></button>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="g3">
+        <div class="card" style="position:relative;overflow:hidden">
+          <div style="position:absolute;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(109,99,232,.12),transparent);right:-20px;top:-20px;pointer-events:none"></div>
+          <div class="kpi-lbl">Note globale</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin:8px 0">
+            <span class="kpi-v">4,3</span><span class="kpi-u">/ 5</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+            <span class="bdg bdg-g">↑ +0,2 vs mois dernier</span>
+            <div style="display:flex;margin-right:-4px">
+              <span style="width:24px;height:24px;border-radius:50%;background:#DBEAFE;color:#2563EB;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff">G</span>
+              <span style="width:24px;height:24px;border-radius:50%;background:#DBEAFE;color:#1D4ED8;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff;margin-left:-5px">Bk</span>
+              <span style="width:24px;height:24px;border-radius:50%;background:var(--t1);color:#0D9488;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff;margin-left:-5px">T</span>
+              <span style="width:24px;height:24px;border-radius:50%;background:#FFF3E0;color:#E65100;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff;margin-left:-5px">A</span>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="position:relative;overflow:hidden">
+          <div style="position:absolute;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,.1),transparent);right:-15px;top:-10px;pointer-events:none"></div>
+          <div class="kpi-lbl">Nombre d'avis</div>
+          <div style="margin:8px 0"><span class="kpi-v">1 284</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+            <span class="bdg bdg-b">+18% vs. N-1</span>
+            <div style="font-size:10.5px;color:var(--tx4);text-align:right;line-height:1.7"><div>Google · <b style="color:var(--tx9)">52%</b></div><div>Booking · <b style="color:var(--tx9)">31%</b></div></div>
+          </div>
+        </div>
+        <div class="card" style="position:relative;overflow:hidden">
+          <div style="position:absolute;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,rgba(13,201,164,.1),transparent);right:-15px;top:-10px;pointer-events:none"></div>
+          <div class="kpi-lbl">Temps de réponse moyen</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin:8px 0"><span class="kpi-v">2h</span><span class="kpi-u">sur les avis reçus</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+            <span style="font-size:11px;color:var(--t5);font-weight:600">✓ 35 min sous la moyenne marché</span>
+            <span class="bdg bdg-g">92% répondu</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="gc2">
+        <div class="card">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+            <div>
+              <p style="font-size:14px;font-weight:700;color:var(--tx9)">Évolution des notes par plateforme</p>
+              <p style="font-size:11px;color:var(--tx4);margin-top:2px">Suivi mensuel sur 12 mois</p>
+            </div>
+            <div style="display:flex;gap:14px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tx4)"><span data-plt-logo="google" data-plt-size="16" style="width:16px;height:16px;border-radius:3px;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"></span>Google</div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tx4)"><span data-plt-logo="booking" data-plt-size="16" style="width:16px;height:16px;border-radius:3px;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"></span>Booking</div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tx4)"><span data-plt-logo="tripadvisor" data-plt-size="16" style="width:16px;height:16px;border-radius:3px;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"></span>Tripadvisor</div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tx4)"><span data-plt-logo="airbnb" data-plt-size="16" style="width:16px;height:16px;border-radius:3px;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"></span>Airbnb</div>
+            </div>
+          </div>
+          <div style="height:240px"><canvas id="lineChart"></canvas></div>
+        </div>
+        <div class="card" style="display:flex;flex-direction:column">
+          <p style="font-size:14px;font-weight:700;color:var(--tx9)">Répartition des notes</p>
+          <p style="font-size:11px;color:var(--tx4);margin-top:2px;margin-bottom:16px">Toutes plateformes</p>
+          <div style="flex:1;display:flex;align-items:center;gap:18px">
+            <div style="width:120px;height:120px;flex-shrink:0"><canvas id="pieChart"></canvas></div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;font-size:12px"><div style="display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;border-radius:50%;background:var(--t5);display:inline-block"></span><span style="color:var(--tx6)">5★</span></div><span style="font-weight:700">52%</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:12px"><div style="display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;border-radius:50%;background:var(--blue);display:inline-block"></span><span style="color:var(--tx6)">4★</span></div><span style="font-weight:700">31%</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:12px"><div style="display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;border-radius:50%;background:var(--p5);display:inline-block"></span><span style="color:var(--tx6)">3★</span></div><span style="font-weight:700">10%</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:12px"><div style="display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;border-radius:50%;background:var(--amber);display:inline-block"></span><span style="color:var(--tx6)">2★</span></div><span style="font-weight:700">5%</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:12px"><div style="display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;border-radius:50%;background:var(--rose);display:inline-block"></span><span style="color:var(--tx6)">1★</span></div><span style="font-weight:700">2%</span></div>
+              <hr><div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--tx4)">Score pondéré</span><span style="font-weight:700">4,3 / 5</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerts + Reviews -->
+      <div class="g2">
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div><p style="font-size:14px;font-weight:700">Dernières alertes</p><p style="font-size:11px;color:var(--tx4);margin-top:2px">Événements critiques détectés</p></div>
+            <button class="btn btn-ghost btn-sm" onclick="nav('radar')">Voir tout</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div class="ali" style="background:#FFF8E7;border:1px solid #FEEFC3;cursor:pointer" onclick="nav('inbox')">
+              <div class="ai-ico" style="background:#FEF3C7;color:var(--amber)"><svg width="13" height="13" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg></div>
+              <div style="flex:1;min-width:0">
+                <div style="display:flex;justify-content:space-between;gap:8px"><p style="font-size:12px;font-weight:600">Pic d'avis négatifs — Hôtel Rivage</p><span style="font-size:10px;color:var(--tx4);flex-shrink:0">Auj · 09:12</span></div>
+                <p style="font-size:11px;color:var(--tx6);margin-top:3px">6 avis &lt;3★ en moins de 24h · propreté, bruit</p>
+              </div>
+            </div>
+            <div class="ali" style="background:#FFF1F2;border:1px solid #FFE4E6;cursor:pointer" onclick="nav('radar')">
+              <div class="ai-ico" style="background:#FFE4E6;color:var(--rose)"><svg width="13" height="13" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg></div>
+              <div style="flex:1;min-width:0">
+                <div style="display:flex;justify-content:space-between;gap:8px"><p style="font-size:12px;font-weight:600">Avis 1★ — Incident sécurité signalé</p><span style="font-size:10px;color:var(--tx4);flex-shrink:0">Hier · 22:37</span></div>
+                <p style="font-size:11px;color:var(--tx6);margin-top:3px">Booking · porte de chambre défectueuse</p>
+              </div>
+            </div>
+            <div class="ali" style="background:#EFF6FF;border:1px solid #DBEAFE;cursor:pointer" onclick="nav('stats')">
+              <div class="ai-ico" style="background:#DBEAFE;color:var(--blue)"><svg width="13" height="13" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg></div>
+              <div style="flex:1;min-width:0">
+                <div style="display:flex;justify-content:space-between;gap:8px"><p style="font-size:12px;font-weight:600">Temps de réponse en hausse — Google</p><span style="font-size:10px;color:var(--tx4);flex-shrink:0">Hier · 18:04</span></div>
+                <p style="font-size:11px;color:var(--tx6);margin-top:3px">1h45 → 3h20 sur les 3 derniers jours</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div><p style="font-size:14px;font-weight:700">Avis non répondus</p><p style="font-size:11px;color:var(--tx4);margin-top:2px">Priorisez les avis sensibles</p></div>
+            <span class="bdg bdg-a">7 en attente</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div class="revi" style="cursor:pointer" onclick="openReview('Google','Hôtel Rivage','3.0','Super localisation mais chambre très bruyante côté rue, difficile de dormir avant 2h du matin. Plusieurs demandes pour changer de chambre ignorées par la réception.','Il y a 3 heures')">
+              <div style="width:32px;height:32px;border-radius:8px;background:#F8FAFC;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;overflow:hidden"><span data-plt-logo="google" data-plt-size="28"></span></div>
+              <div style="flex:1;min-width:0">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+                  <div><div style="display:flex;align-items:center;gap:6px"><p style="font-size:12px;font-weight:600">Google · Hôtel Rivage</p><span style="font-size:11px;font-weight:700;color:var(--amber)">3,0★</span></div>
+                  <p style="font-size:11px;color:var(--tx6);margin-top:3px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical">Super localisation mais chambre très bruyante côté rue...</p>
+                  <p style="font-size:10px;color:var(--tx4);margin-top:2px">Il y a 3 heures</p></div>
+                  <button class="btn btn-p btn-xs" onclick="event.stopPropagation();openReview('Google','Hôtel Rivage','3.0','Super localisation mais chambre très bruyante côté rue...','Il y a 3 heures')">Répondre</button>
+                </div>
+              </div>
+            </div>
+            <div class="revi" style="cursor:pointer" onclick="openReview('Booking','Suite familiale','4.0','Très satisfait du service et du petit-déjeuner, mais l\'enregistrement a été plus long que prévu. Personnel aimable.','Hier · 19:22')">
+              <div style="width:32px;height:32px;border-radius:8px;background:#F8FAFC;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;overflow:hidden"><span data-plt-logo="booking" data-plt-size="28"></span></div>
+              <div style="flex:1;min-width:0">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+                  <div><div style="display:flex;align-items:center;gap:6px"><p style="font-size:12px;font-weight:600">Booking · Suite familiale</p><span style="font-size:11px;font-weight:700;color:var(--t5)">4,0★</span></div>
+                  <p style="font-size:11px;color:var(--tx6);margin-top:3px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical">Très satisfait mais check-in long...</p>
+                  <p style="font-size:10px;color:var(--tx4);margin-top:2px">Hier · 19:22</p></div>
+                  <button class="btn btn-o btn-xs" onclick="event.stopPropagation();openReview('Booking','Suite familiale','4.0','Très satisfait du service...','Hier · 19:22')">Répondre</button>
+                </div>
+              </div>
+            </div>
+            <div class="revi" style="cursor:pointer" onclick="openReview('Tripadvisor','Séjour affaires','2.0','Wifi instable toute la semaine, difficile de travailler correctement depuis la chambre. Inacceptable pour un séjour business.','Il y a 2 jours')">
+              <div style="width:32px;height:32px;border-radius:8px;background:#F8FAFC;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;overflow:hidden"><span data-plt-logo="tripadvisor" data-plt-size="28"></span></div>
+              <div style="flex:1;min-width:0">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+                  <div><div style="display:flex;align-items:center;gap:6px"><p style="font-size:12px;font-weight:600">Tripadvisor · Séjour affaires</p><span style="font-size:11px;font-weight:700;color:var(--rose)">2,0★</span></div>
+                  <p style="font-size:11px;color:var(--tx6);margin-top:3px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical">Wifi instable toute la semaine...</p>
+                  <p style="font-size:10px;color:var(--tx4);margin-top:2px">Il y a 2 jours</p></div>
+                  <button class="btn btn-o btn-xs" onclick="event.stopPropagation();openReview('Tripadvisor','Séjour affaires','2.0','Wifi instable...','Il y a 2 jours')">Répondre</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="lnk" style="margin-top:10px" onclick="nav('inbox')">Voir tous les avis en attente <svg width="10" height="10" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.75 10a.75.75 0 01.75-.75h8.19L9.22 5.28a.75.75 0 111.06-1.06l5.5 5.5a.748.748 0 010 1.06l-5.5 5.5a.75.75 0 11-1.06-1.06l3.47-3.97H4.5A.75.75 0 013.75 10z" clip-rule="evenodd"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ INBOX ═══ -->
+    <div class="screen" id="s-inbox">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div><h1 class="ptitle">Inbox <span class="sub">Avis clients</span></h1><p class="psub">Centralisez et répondez à tous vos avis</p></div>
+        <button class="btn btn-p btn-sm" id="syncBtn" onclick="syncNow(this)"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Synchroniser</button>
+      </div>
+      <div class="fbar">
+        <input class="inp" style="width:220px;padding:7px 12px;font-size:12px" id="inboxSearch" oninput="filterInbox()" placeholder="🔍 Rechercher un avis...">
+        <select class="inp" id="inboxFilterPlatform" onchange="filterInbox()" style="width:140px;padding:7px 12px;font-size:12px"><option>Toutes plateformes</option><option>Google</option><option>Booking</option><option>Tripadvisor</option><option>Expedia</option><option>Airbnb</option><option>Agoda</option><option>Ctrip</option></select>
+        <select class="inp" id="inboxFilterStatus" onchange="filterInbox()" style="width:130px;padding:7px 12px;font-size:12px"><option>Tous statuts</option><option>À répondre</option><option>Répondu</option><option>Suspect</option></select>
+        <select class="inp" id="inboxFilterRating" onchange="filterInbox()" style="width:120px;padding:7px 12px;font-size:12px"><option>Toutes notes</option><option>1★</option><option>2★</option><option>3★</option><option>4★</option><option>5★</option></select>
+        <select class="inp" style="width:130px;padding:7px 12px;font-size:12px"><option>30 derniers jours</option><option>7 jours</option><option>3 mois</option><option>12 mois</option></select>
+      </div>
+      <div class="card card-sm" style="padding:0;overflow:hidden">
+        <table class="tbl">
+          <thead><tr>
+            <th>Plateforme</th><th>Note</th><th>Auteur</th><th>Extrait</th><th>Trust Score</th><th>Statut</th><th>Date</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="inboxTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ CONNECTIONS ═══ -->
+    <div class="screen" id="s-connections">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div><h1 class="ptitle">Connexions <span class="sub">Plateformes</span></h1><p class="psub">Gérez les intégrations OTA et partenaires de collecte d'avis</p></div>
+        <button class="btn btn-p btn-sm" onclick="openAddPlatform()"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Ajouter un partenaire</button>
+      </div>
+
+      <!-- Status global -->
+      <div class="g4" style="grid-template-columns:repeat(4,1fr)">
+        <div class="card card-sm" style="text-align:center"><div style="font-size:24px;font-weight:800;color:var(--p6)">8</div><div style="font-size:11px;color:var(--tx4);margin-top:2px">Plateformes actives</div></div>
+        <div class="card card-sm" style="text-align:center"><div style="font-size:24px;font-weight:800;color:var(--t5)">1 284</div><div style="font-size:11px;color:var(--tx4);margin-top:2px">Avis collectés</div></div>
+        <div class="card card-sm" style="text-align:center"><div style="font-size:24px;font-weight:800;color:var(--amber)">2</div><div style="font-size:11px;color:var(--tx4);margin-top:2px">Reconnexion requise</div></div>
+        <div class="card card-sm" style="text-align:center"><div style="font-size:24px;font-weight:800;color:var(--tx9)">5 min</div><div style="font-size:11px;color:var(--tx4);margin-top:2px">Dernière synchro</div></div>
+      </div>
+
+      <div id="platformGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px"></div>
+    </div>
+
+    <!-- ═══ RADAR IA ═══ -->
+    <div class="screen" id="s-radar">
+      <div><h1 class="ptitle">Radar <span class="sub">IA</span></h1><p class="psub">Détection automatique des problèmes récurrents avant qu'ils n'impactent vos notes</p></div>
+      <div class="g3">
+        <div class="card card-sm" style="text-align:center"><div style="font-size:26px;font-weight:800;color:var(--rose)">4</div><div style="font-size:11px;color:var(--tx4);margin-top:2px">Problèmes ouverts</div></div>
+        <div class="card card-sm" style="text-align:center"><div style="font-size:26px;font-weight:800;color:var(--amber)">2</div><div style="font-size:11px;color:var(--tx4);margin-top:2px">En investigation</div></div>
+        <div class="card card-sm" style="text-align:center"><div style="font-size:26px;font-weight:800;color:var(--t5)">12</div><div style="font-size:11px;color:var(--tx4);margin-top:2px">Résolus ce mois</div></div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <p style="font-size:14px;font-weight:700;margin-bottom:14px">Problèmes détectés</p>
+          <div class="fbar" style="margin-bottom:12px">
+            <select class="inp" style="width:120px;padding:6px 10px;font-size:11.5px"><option>Tous types</option><option>Propreté</option><option>Bruit</option><option>Équipement</option><option>Service</option><option>Maintenance</option></select>
+            <select class="inp" style="width:120px;padding:6px 10px;font-size:11.5px"><option>Tous statuts</option><option>Ouvert</option><option>En cours</option><option>Résolu</option></select>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>Type</th><th>Chambre</th><th>Risque</th><th>Statut</th><th>Mentions</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><span class="plt-ico" style="background:#FFF1F2;color:var(--rose);width:24px;height:24px;border-radius:6px;font-size:12px;margin-right:6px;display:inline-flex;align-items:center;justify-content:center">🧹</span>Propreté</td><td>Ch. 205</td><td><span class="rscore rs-hi">84</span></td><td><span class="bdg bdg-r">Ouvert</span></td><td>7</td><td><button class="btn btn-ghost btn-xs" onclick="openRadarPanel(0)">Détails</button></td></tr>
+              <tr><td><span style="margin-right:6px">🔊</span>Bruit nocturne</td><td>Ch. 301–306</td><td><span class="rscore rs-med">61</span></td><td><span class="bdg bdg-a">En cours</span></td><td>5</td><td><button class="btn btn-ghost btn-xs" onclick="openRadarPanel(1)">Détails</button></td></tr>
+              <tr><td><span style="margin-right:6px">📶</span>Wifi instable</td><td>Étage 3</td><td><span class="rscore rs-med">58</span></td><td><span class="bdg bdg-a">En cours</span></td><td>4</td><td><button class="btn btn-ghost btn-xs" onclick="openRadarPanel(2)">Détails</button></td></tr>
+              <tr><td><span style="margin-right:6px">🚿</span>Salle de bain</td><td>Ch. 112</td><td><span class="rscore rs-med">45</span></td><td><span class="bdg bdg-r">Ouvert</span></td><td>3</td><td><button class="btn btn-ghost btn-xs" onclick="openRadarPanel(3)">Détails</button></td></tr>
+              <tr><td><span style="margin-right:6px">☕</span>Petit-déjeuner</td><td>—</td><td><span class="rscore rs-low">28</span></td><td><span class="bdg bdg-g">Surveillé</span></td><td>2</td><td><button class="btn btn-ghost btn-xs" onclick="openRadarPanel(4)">Détails</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <p style="font-size:14px;font-weight:700;margin-bottom:4px">Évolution des problèmes</p>
+          <p style="font-size:11px;color:var(--tx4);margin-bottom:16px">Par type sur 30 jours</p>
+          <div style="height:220px"><canvas id="radarChart"></canvas></div>
+        </div>
+      </div>
+      <div class="card" style="background:linear-gradient(135deg,var(--p0),var(--t0));border-color:var(--p1)">
+        <div style="display:flex;align-items:flex-start;gap:14px">
+          <div style="width:40px;height:40px;border-radius:12px;background:var(--p1);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px">🤖</div>
+          <div>
+            <p style="font-size:14px;font-weight:700;color:var(--p8)">Recommandations IA</p>
+            <div style="margin-top:10px;display:flex;flex-direction:column;gap:7px">
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--tx6)"><span style="color:var(--rose);font-weight:700;flex-shrink:0">●</span>Chambre 205 : 7 mentions de propreté insuffisante ce mois. Planifiez un nettoyage approfondi et vérifiez les produits utilisés.</div>
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--tx6)"><span style="color:var(--amber);font-weight:700;flex-shrink:0">●</span>Étages 3–4 : problèmes de wifi récurrents. Coordonnez avec le service technique pour renforcer le signal.</div>
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--tx6)"><span style="color:var(--blue);font-weight:700;flex-shrink:0">●</span>Chambres côté rue (301–306) : considérez des équipements anti-bruit ou signalez les clients sensibles au bruit lors du check-in.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ OTA BOOSTER ═══ -->
+    <div class="screen" id="s-booster">
+      <div><h1 class="ptitle">OTA Score <span class="sub">Booster</span></h1><p class="psub">Optimisez vos performances sur les plateformes de réservation</p></div>
+      <div class="g2">
+        <div class="card" style="display:flex;align-items:center;gap:24px">
+          <div style="position:relative;width:130px;height:130px;flex-shrink:0">
+            <canvas id="otaGauge"></canvas>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none">
+              <span style="font-size:10px;font-weight:600;color:var(--tx4);text-transform:uppercase;letter-spacing:.08em">Score</span>
+              <span style="font-size:40px;font-weight:800;color:var(--tx9);line-height:1;letter-spacing:-2px">78</span>
+            </div>
+          </div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:18px;font-weight:800;color:var(--tx9)">OTA Booster Score</span><span class="bdg bdg-g" style="font-size:11px">BON</span></div>
+            <p style="font-size:12px;color:var(--tx4);line-height:1.6;margin-bottom:14px">Score global calculé sur vos notes moyennes, volume d'avis, rapidité de réponse et tendance d'évolution.</p>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px"><span style="color:var(--tx6)">Notes moyennes</span><span style="font-weight:700;color:var(--t5)">92/100</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px"><span style="color:var(--tx6)">Volume d'avis</span><span style="font-weight:700;color:var(--blue)">74/100</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px"><span style="color:var(--tx6)">Temps de réponse</span><span style="font-weight:700;color:var(--amber)">68/100</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px"><span style="color:var(--tx6)">Objectif trimestriel</span><span style="font-weight:700;color:var(--p6)">80+</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <p style="font-size:14px;font-weight:700;margin-bottom:14px">Notes par plateforme</p>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;gap:10px"><div style="width:30px;height:30px;border-radius:8px;background:#F8FAFC;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden"><span data-plt-logo="google" data-plt-size="26"></span></div><div style="flex:1"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">Google</span><span style="font-weight:700;color:var(--t5)">4,6 <span style="color:var(--t5);font-size:10px">↑</span></span></div><div class="pbar"><div class="pfill" style="width:92%"></div></div></div></div>
+            <div style="display:flex;align-items:center;gap:10px"><div style="width:30px;height:30px;border-radius:8px;background:#F8FAFC;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden"><span data-plt-logo="booking" data-plt-size="26"></span></div><div style="flex:1"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">Booking</span><span style="font-weight:700;color:var(--t5)">4,4 <span style="color:var(--t5);font-size:10px">↑</span></span></div><div class="pbar"><div class="pfill" style="width:88%"></div></div></div></div>
+            <div style="display:flex;align-items:center;gap:10px"><div style="width:30px;height:30px;border-radius:8px;background:#F8FAFC;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden"><span data-plt-logo="tripadvisor" data-plt-size="26"></span></div><div style="flex:1"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">Tripadvisor</span><span style="font-weight:700;color:var(--amber)">4,3 →</span></div><div class="pbar"><div class="pfill" style="width:86%"></div></div></div></div>
+            <div style="display:flex;align-items:center;gap:10px"><div style="width:30px;height:30px;border-radius:8px;background:#F8FAFC;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden"><span data-plt-logo="airbnb" data-plt-size="26"></span></div><div style="flex:1"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">Airbnb</span><span style="font-weight:700;color:var(--rose)">4,1 <span style="font-size:10px">↓</span></span></div><div class="pbar"><div class="pfill" style="width:82%"></div></div></div></div>
+            <div style="display:flex;align-items:center;gap:10px"><div style="width:30px;height:30px;border-radius:8px;background:#F8FAFC;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden"><span data-plt-logo="agoda" data-plt-size="26"></span></div><div style="flex:1"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="font-weight:600">Agoda</span><span style="font-weight:700;color:var(--t5)">4,5 ↑</span></div><div class="pbar"><div class="pfill" style="width:90%"></div></div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <p style="font-size:14px;font-weight:700;margin-bottom:14px">Actions recommandées <span class="bdg bdg-p" style="font-size:11px;margin-left:6px">5 actions</span></p>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--p0);border:1px solid var(--p1);border-radius:14px"><div style="width:36px;height:36px;border-radius:10px;background:var(--p1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📨</div><div style="flex:1"><p style="font-size:13px;font-weight:600;color:var(--tx9)">Répondre aux 7 avis non répondus</p><p style="font-size:11px;color:var(--tx4);margin-top:2px">+0,15 point estimé sur votre note Booking</p></div><button class="btn btn-p btn-sm" onclick="nav('inbox')">Aller à l'inbox</button></div>
+          <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--t0);border:1px solid var(--t1);border-radius:14px"><div style="width:36px;height:36px;border-radius:10px;background:var(--t1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🎯</div><div style="flex:1"><p style="font-size:13px;font-weight:600;color:var(--tx9)">12 clients satisfaits non encore invités à publier</p><p style="font-size:11px;color:var(--tx4);margin-top:2px">Volume d'avis Google estimé +8%</p></div><button class="btn btn-o btn-sm" onclick="nav('campaigns')">Lancer campagne</button></div>
+          <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:#FFFBEB;border:1px solid #FEF3C7;border-radius:14px"><div style="width:36px;height:36px;border-radius:10px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📶</div><div style="flex:1"><p style="font-size:13px;font-weight:600;color:var(--tx9)">Résoudre les problèmes Wifi — Étage 3</p><p style="font-size:11px;color:var(--tx4);margin-top:2px">Point faible récurrent détecté par le Radar IA</p></div><button class="btn btn-ghost btn-sm" onclick="nav('radar')">Voir Radar IA</button></div>
+          <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:#FFF1F2;border:1px solid #FFE4E6;border-radius:14px"><div style="width:36px;height:36px;border-radius:10px;background:#FFE4E6;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🛡️</div><div style="flex:1"><p style="font-size:13px;font-weight:600;color:var(--tx9)">3 avis suspects à traiter sur Airbnb</p><p style="font-size:11px;color:var(--tx4);margin-top:2px">Trust Score &gt; 70 — signalement recommandé</p></div><button class="btn btn-danger btn-sm" onclick="nav('integrity')">Voir avis suspects</button></div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><p style="font-size:14px;font-weight:700">Opportunités</p><span class="bdg bdg-a">12 clients</span></div>
+        <p style="font-size:12px;color:var(--tx4);margin-bottom:12px">Clients ayant laissé un feedback interne ≥ 4 non encore invités à publier un avis public.</p>
+        <table class="tbl">
+          <thead><tr><th>Client</th><th>Chambre</th><th>Note interne</th><th>Séjour</th><th>Plateformes suggérées</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>Marie Dupont</td><td>204</td><td><span style="color:var(--t5);font-weight:700">5,0★</span></td><td>10–12 mars</td><td style="white-space:nowrap"><span style="display:inline-flex;align-items:center;gap:3px;margin-right:5px"><span data-plt-logo="google" data-plt-size="16" style="width:16px;height:16px;border-radius:3px;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"></span><span style="font-size:11px;font-weight:500">Google</span></span><span style="display:inline-flex;align-items:center;gap:3px;margin-right:5px"><span data-plt-logo="tripadvisor" data-plt-size="16" style="width:16px;height:16px;border-radius:3px;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"></span><span style="font-size:11px;font-weight:500">Tripadvisor</span></span></td><td><button class="btn btn-p btn-xs" onclick="inviteClient(this,'Marie Dupont','Google')">Inviter</button></td></tr>
+            <tr><td>Jean Martin</td><td>312</td><td><span style="color:var(--t5);font-weight:700">4,8★</span></td><td>9–11 mars</td><td style="white-space:nowrap"><span style="display:inline-flex;align-items:center;gap:3px;margin-right:5px"><span data-plt-logo="booking" data-plt-size="16" style="width:16px;height:16px;border-radius:3px;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"></span><span style="font-size:11px;font-weight:500">Booking</span></span><span style="display:inline-flex;align-items:center;gap:3px;margin-right:5px"><span data-plt-logo="google" data-plt-size="16" style="width:16px;height:16px;border-radius:3px;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"></span><span style="font-size:11px;font-weight:500">Google</span></span></td><td><button class="btn btn-p btn-xs" onclick="inviteClient(this,'Jean Martin','Booking')">Inviter</button></td></tr>
+            <tr><td>Sophie Bernard</td><td>105</td><td><span style="color:var(--blue);font-weight:700">4,2★</span></td><td>8–10 mars</td><td style="white-space:nowrap"><span style="display:inline-flex;align-items:center;gap:3px;margin-right:5px"><span data-plt-logo="google" data-plt-size="16" style="width:16px;height:16px;border-radius:3px;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"></span><span style="font-size:11px;font-weight:500">Google</span></span></td><td><button class="btn btn-p btn-xs" onclick="inviteClient(this,'Sophie Bernard','Google')">Inviter</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ STATS ═══ -->
+    <div class="screen" id="s-stats">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div><h1 class="ptitle">Statistiques <span class="sub">Réputation</span></h1><p class="psub">Analyse approfondie de vos performances</p></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick="exportCSV()"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Export CSV</button>
+          <button class="btn btn-ghost btn-sm" onclick="exportReport()"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Export PDF</button>
+        </div>
+      </div>
+      <div class="g4">
+        <div class="card card-sm" style="text-align:center"><div class="kpi-lbl">Note globale</div><div style="font-size:28px;font-weight:800;color:var(--tx9);margin:6px 0">4,3</div><span class="bdg bdg-g">+0,2 / mois</span></div>
+        <div class="card card-sm" style="text-align:center"><div class="kpi-lbl">Total avis</div><div style="font-size:28px;font-weight:800;color:var(--tx9);margin:6px 0">1 284</div><span class="bdg bdg-b">+18% vs N-1</span></div>
+        <div class="card card-sm" style="text-align:center"><div class="kpi-lbl">Taux de réponse</div><div style="font-size:28px;font-weight:800;color:var(--tx9);margin:6px 0">92%</div><span class="bdg bdg-g">Excellent</span></div>
+        <div class="card card-sm" style="text-align:center"><div class="kpi-lbl">Temps réponse</div><div style="font-size:28px;font-weight:800;color:var(--tx9);margin:6px 0">2h</div><span class="bdg bdg-g">-35 min marché</span></div>
+      </div>
+      <div class="g2">
+        <div class="card"><p style="font-size:14px;font-weight:700;margin-bottom:4px">Volume d'avis mensuel</p><p style="font-size:11px;color:var(--tx4);margin-bottom:16px">Tous canaux confondus</p><div style="height:220px"><canvas id="volChart"></canvas></div></div>
+        <div class="card"><p style="font-size:14px;font-weight:700;margin-bottom:4px">Notes par plateforme</p><p style="font-size:11px;color:var(--tx4);margin-bottom:16px">Comparaison multi-OTA</p><div style="height:220px"><canvas id="barChart"></canvas></div></div>
+      </div>
+      <div class="card">
+        <p style="font-size:14px;font-weight:700;margin-bottom:4px">Mots-clés récurrents</p>
+        <p style="font-size:11px;color:var(--tx4);margin-bottom:16px">Analyse sémantique des commentaires</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <span style="padding:6px 14px;border-radius:999px;background:var(--t0);color:var(--t5);border:1px solid var(--t1);font-size:14px;font-weight:700">Propre</span>
+          <span style="padding:6px 14px;border-radius:999px;background:var(--t0);color:var(--t5);border:1px solid var(--t1);font-size:20px;font-weight:700">Accueil</span>
+          <span style="padding:6px 14px;border-radius:999px;background:var(--p0);color:var(--p6);border:1px solid var(--p1);font-size:17px;font-weight:700">Petit-déjeuner</span>
+          <span style="padding:6px 14px;border-radius:999px;background:#EFF6FF;color:var(--blue);border:1px solid #DBEAFE;font-size:13px;font-weight:700">Localisation</span>
+          <span style="padding:6px 14px;border-radius:999px;background:#FFFBEB;color:var(--amber);border:1px solid #FEF3C7;font-size:11px;font-weight:600">Bruit</span>
+          <span style="padding:6px 14px;border-radius:999px;background:#FFF1F2;color:var(--rose);border:1px solid #FFE4E6;font-size:10px;font-weight:600">Wifi</span>
+          <span style="padding:6px 14px;border-radius:999px;background:var(--t0);color:var(--t5);border:1px solid var(--t1);font-size:16px;font-weight:700">Personnel</span>
+          <span style="padding:6px 14px;border-radius:999px;background:#FFF1F2;color:var(--rose);border:1px solid #FFE4E6;font-size:12px;font-weight:600">Check-in</span>
+          <span style="padding:6px 14px;border-radius:999px;background:var(--p0);color:var(--p6);border:1px solid var(--p1);font-size:15px;font-weight:700">Confort</span>
+          <span style="padding:6px 14px;border-radius:999px;background:var(--t0);color:var(--t5);border:1px solid var(--t1);font-size:19px;font-weight:700">Vue</span>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:16px;font-size:11px;color:var(--tx4)"><span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:50%;background:var(--t5);display:inline-block"></span>Positif</span><span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:50%;background:var(--rose);display:inline-block"></span>Négatif</span><span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:50%;background:var(--p5);display:inline-block"></span>Neutre</span></div>
+      </div>
+    </div>
+
+    <!-- ═══ INTEGRITY ═══ -->
+    <div class="screen" id="s-integrity">
+
+      <!-- Header row -->
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+          <h1 class="ptitle">Intégrité <span class="sub">des avis</span></h1>
+          <p class="psub">Détection IA automatique des avis frauduleux &nbsp;•&nbsp; Mise à jour il y a 4 min</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="display:flex;align-items:center;gap:6px;background:#ECFDF5;border:1px solid #A7F3D0;color:#059669;font-size:11px;font-weight:600;padding:5px 12px;border-radius:999px">
+            <span style="width:7px;height:7px;background:#10B981;border-radius:50%;display:inline-block;animation:pls 2s infinite"></span>
+            IA ACTIVE
+          </div>
+          <button onclick="intTriggerAnalysis()" style="display:flex;align-items:center;gap:6px;background:transparent;border:1px solid #FED7AA;color:#EA580C;font-size:11px;font-weight:600;padding:6px 14px;border-radius:999px;cursor:pointer;font-family:inherit;transition:all .15s">
+            <svg width="11" height="11" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
+            12 avis suspects ce mois
+          </button>
+          <button onclick="intAnalyzeNow(this)" class="btn btn-p btn-sm" style="gap:6px;border-radius:999px">
+            <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.802 2.036a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.802-2.036a1 1 0 00-1.176 0l-2.802 2.036c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            Analyser maintenant
+          </button>
+          <div class="int-period">
+            <button class="act" onclick="intPeriod(this,'30j')">30 jours</button>
+            <button onclick="intPeriod(this,'90j')">90 jours</button>
+            <button onclick="intPeriod(this,'an')">Année</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 KPI CARDS -->
+      <div class="g4">
+        <div class="int-metric">
+          <div class="ico" style="background:#EFF6FF"><svg width="16" height="16" fill="#2563EB" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm2 0a1 1 0 011 1v3a1 1 0 11-2 0v-3a1 1 0 011-1z" clip-rule="evenodd"/></svg></div>
+          <div class="label">Avis analysés</div>
+          <div class="value" style="color:var(--tx9)">1 284</div>
+          <div style="margin-top:12px;display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t5);font-weight:600">
+            <svg width="10" height="10" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/></svg>
+            +84 ce mois
+          </div>
+        </div>
+        <div class="int-metric" style="border-color:#FED7AA">
+          <div class="ico" style="background:#FFF7ED"><svg width="16" height="16" fill="#EA580C" viewBox="0 0 20 20"><path d="M9 9a2 2 0 114 0 2 2 0 01-4 0z"/><path fill-rule="evenodd" d="M10 3a7 7 0 100 14A7 7 0 0010 3zm-7 7a7 7 0 1114 0A7 7 0 013 10z" clip-rule="evenodd"/></svg></div>
+          <div class="label" style="color:#EA580C">Avis suspects</div>
+          <div class="value" style="color:#EA580C">48</div>
+          <div style="margin-top:12px;font-size:10px;color:#EA580C;font-weight:600;background:#FFF7ED;display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px">
+            <span style="width:5px;height:5px;background:#EA580C;border-radius:50%;animation:pls 1.5s infinite;display:inline-block"></span>
+            3.7% · HAUT
+          </div>
+        </div>
+        <div class="int-metric" style="border-color:var(--rose-bdr)">
+          <div class="ico" style="background:var(--rose-bg)"><svg width="16" height="16" fill="#DC2626" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 7l2.55 2.4A1 1 0 0116 11H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z" clip-rule="evenodd"/></svg></div>
+          <div class="label">Avis signalés</div>
+          <div class="value" style="color:var(--tx9)">12</div>
+          <div style="margin-top:14px;height:5px;background:var(--bdr);border-radius:999px;overflow:hidden"><div style="width:25%;height:100%;background:#EF4444;border-radius:999px"></div></div>
+        </div>
+        <div class="int-metric" style="border-color:var(--t1)">
+          <div class="ico" style="background:var(--t0)"><svg width="16" height="16" fill="#059669" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg></div>
+          <div class="label" style="color:#059669">Précision IA</div>
+          <div class="value" style="color:#059669">94%</div>
+          <div style="margin-top:14px;display:flex;gap:4px">
+            <div style="flex:1;height:4px;background:#A7F3D0;border-radius:999px"></div>
+            <div style="flex:1;height:4px;background:#34D399;border-radius:999px"></div>
+            <div style="flex:1;height:4px;background:#059669;border-radius:999px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TREND CHART -->
+      <div class="card" style="padding:24px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <svg width="14" height="14" fill="none" stroke="#0EA5E9" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <span style="font-size:13.5px;font-weight:600;color:var(--tx9)">Évolution des détections</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px">
+            <div style="display:flex;gap:0;border:1px solid var(--bdr);border-radius:8px;overflow:hidden;font-size:11.5px;font-weight:500">
+              <button id="int-gt-0" onclick="intGraphToggle(0)" style="padding:5px 14px;background:var(--tx9);color:#fff;border:none;cursor:pointer;font-family:inherit;font-size:11.5px;font-weight:500">Suspects</button>
+              <button id="int-gt-1" onclick="intGraphToggle(1)" style="padding:5px 14px;background:#fff;color:var(--tx6);border:none;cursor:pointer;font-family:inherit;font-size:11.5px;font-weight:500">Tous les avis</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;font-size:11px;color:var(--tx4)">
+              <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:2px;background:#EF4444;border-radius:2px"></div>Suspects</div>
+              <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:2px;background:#0EA5E9;border-radius:2px"></div>Moyenne</div>
+            </div>
+          </div>
+        </div>
+        <div style="height:220px;position:relative"><canvas id="intTrendChart"></canvas></div>
+      </div>
+
+      <!-- TABLE -->
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="padding:18px 22px 14px;border-bottom:1px solid var(--bdr);background:#F8FAFC;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <span style="font-size:14px;font-weight:700;color:var(--tx9)">Avis suspects détectés</span>
+          <input id="intSearch" onkeyup="intFilterTable()" type="text" placeholder="Rechercher un auteur ou commentaire..."
+            style="width:260px;padding:7px 14px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:inherit;color:var(--tx9);background:#fff;outline:none;transition:border-color .15s"
+            onfocus="this.style.borderColor='#4361EE'" onblur="this.style.borderColor='var(--bdr)'">
+        </div>
+        <table class="int-tbl">
+          <thead>
+            <tr>
+              <th>Plateforme</th><th>Auteur</th><th>Note</th><th>Extrait</th>
+              <th>Score confiance</th><th>Raisons</th><th>Statut</th><th style="text-align:right;padding-right:22px">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="intTableBody"></tbody>
+        </table>
+      </div>
+
+      <!-- RULES -->
+      <div class="card" style="padding:20px 22px">
+        <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="intToggleRules()">
+          <div style="display:flex;align-items:center;gap:8px">
+            <svg id="intRulesIcon" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
+            <span style="font-size:13.5px;font-weight:600">Règles de détection actives</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;background:#F8FAFC;border:1px solid var(--bdr);border-radius:999px;padding:4px 12px;font-size:11px">
+            <span style="color:var(--t5);font-weight:600">8 critères</span>
+            <span style="color:var(--tx3)">·</span>
+            <span style="color:var(--tx4)">4 activés</span>
+          </div>
+        </div>
+        <div id="intRulesContent" style="display:none;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px" id="intRulesContent">
+          <!-- populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- INTEGRITY DRAWER OVERLAY -->
+    <div class="int-overlay" id="intOverlay" onclick="intCloseDrawer()"></div>
+
+    <!-- INTEGRITY DRAWER -->
+    <div class="int-drawer" id="intDrawer">
+      <div style="padding:18px 20px;border-bottom:1px solid var(--bdr);background:#F8FAFC;display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span id="intDrawerPlt" style="font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;background:#fff;border:1px solid var(--bdr);border-radius:999px;color:var(--p6)"></span>
+          <span id="intDrawerAuthor" style="font-size:13.5px;font-weight:700;color:var(--tx9)"></span>
+        </div>
+        <button onclick="intCloseDrawer()" style="width:28px;height:28px;border-radius:8px;border:1px solid var(--bdr);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--tx4);transition:all .15s" onmouseover="this.style.background='var(--p0)'" onmouseout="this.style.background='#fff'">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div style="flex:1;overflow-y:auto">
+        <!-- Stars + Score -->
+        <div style="padding:20px;border-bottom:1px solid var(--bdr)">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div id="intDrawerStars" style="font-size:18px;letter-spacing:1px"></div>
+            <div style="text-align:right">
+              <div style="font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx4)">Score confiance</div>
+              <div id="intDrawerScore" style="font-size:44px;font-weight:800;letter-spacing:-2px;color:#EF4444;font-feature-settings:'tnum'">24</div>
+            </div>
+          </div>
+          <div style="margin-top:12px;height:8px;background:var(--bdr);border-radius:999px;overflow:hidden">
+            <div id="intDrawerBar" style="height:100%;border-radius:999px;background:linear-gradient(90deg,#EF4444,#F97316);transition:width .4s ease;width:24%"></div>
+          </div>
+        </div>
+        <!-- Comment -->
+        <div style="padding:18px 20px;border-bottom:1px solid var(--bdr)">
+          <div style="font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx4);margin-bottom:10px">Commentaire</div>
+          <div id="intDrawerComment" style="font-size:13px;color:var(--tx6);line-height:1.65"></div>
+          <div id="intDrawerDate" style="font-size:10.5px;color:var(--tx4);margin-top:12px"></div>
+        </div>
+        <!-- AI Analysis -->
+        <div style="padding:18px 20px;border-bottom:1px solid var(--bdr)">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx6)">
+              <svg width="13" height="13" fill="#8B5CF6" viewBox="0 0 20 20"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/></svg>
+              Analyse IA
+            </div>
+            <div style="background:#EDE9FE;color:#7C3AED;font-size:10px;font-weight:600;padding:2px 10px;border-radius:999px">98% confiance</div>
+          </div>
+          <div id="intDrawerReasons" style="display:flex;flex-direction:column;gap:14px"></div>
+        </div>
+        <!-- Actions -->
+        <div style="padding:16px 20px;background:#F8FAFC;border-bottom:1px solid var(--bdr)">
+          <button onclick="intGenerateReport()" style="width:100%;height:38px;display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--bdr);background:#fff;border-radius:999px;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;color:var(--tx6);transition:all .15s;margin-bottom:8px" onmouseover="this.style.borderColor='var(--tx3)'" onmouseout="this.style.borderColor='var(--bdr)'">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Générer rapport de signalement
+          </button>
+          <button onclick="intSuggestResponse()" class="btn btn-p" style="width:100%;justify-content:center;border-radius:999px;height:38px">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            Réponse IA recommandée
+          </button>
+        </div>
+        <!-- History -->
+        <div style="padding:16px 20px">
+          <div style="font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx4);margin-bottom:12px">Historique</div>
+          <div style="display:flex;flex-direction:column;gap:10px;font-size:11px">
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--tx6)">Analyse IA</span><span style="color:var(--tx4)">aujourd'hui</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--t5);font-weight:600">Marqué comme suspect</span><span style="color:var(--tx4)">hier</span></div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:14px 20px;border-top:1px solid var(--bdr);display:flex;gap:8px">
+        <button onclick="intMarkReliable()" style="flex:1;height:36px;border:1px solid var(--t1);background:#fff;color:var(--t5);border-radius:999px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s" onmouseover="this.style.background='var(--t0)'" onmouseout="this.style.background='#fff'">Marquer fiable</button>
+        <button onclick="intReportReview()" style="flex:1;height:36px;background:#EF4444;color:#fff;border:none;border-radius:999px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s" onmouseover="this.style.background='#DC2626'" onmouseout="this.style.background='#EF4444'">Signaler</button>
+      </div>
+    </div>
+
+
+        <!-- ═══ CAMPAIGNS ═══ -->
+    <div class="screen" id="s-campaigns">
+      <div><h1 class="ptitle">Campagnes <span class="sub">QR &amp; Feedback</span></h1><p class="psub">Collecte interne et transformation des retours positifs en avis publics</p></div>
+      <!-- Tabs -->
+      <div style="display:flex;gap:4px;background:var(--p0);border:1px solid var(--bdr);border-radius:12px;padding:4px;width:fit-content">
+        <button class="btn btn-p btn-sm" id="tab-qr" onclick="switchTab('qr')">QR Codes</button>
+        <button class="btn btn-ghost btn-sm" id="tab-fb" onclick="switchTab('fb')" style="background:transparent;border:none">Feedbacks internes</button>
+        <button class="btn btn-ghost btn-sm" id="tab-inv" onclick="switchTab('inv')" style="background:transparent;border:none">Invitations</button>
+      </div>
+      <div id="tab-qr-content">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+          <span class="bdg bdg-p">14 QR codes actifs</span>
+          <button class="btn btn-p btn-sm" onclick="openAddQR()"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Générer un QR code</button>
+        </div>
+        <div class="card card-sm" style="padding:0;overflow:hidden">
+          <table class="tbl">
+            <thead><tr><th>Type</th><th>Chambre / Espace</th><th>Scans</th><th>Note moy.</th><th>Créé le</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><span class="bdg bdg-p">Chambre</span></td><td>101</td><td>23</td><td><span style="color:var(--t5);font-weight:700">4,8★</span></td><td>15 jan.</td><td><button class="btn btn-ghost btn-xs" onclick="showToast('PDF QR Code téléchargé ✓')">PDF</button></td></tr>
+              <tr><td><span class="bdg bdg-p">Chambre</span></td><td>102</td><td>18</td><td><span style="color:var(--blue);font-weight:700">4,3★</span></td><td>15 jan.</td><td><button class="btn btn-ghost btn-xs" onclick="showToast('PDF QR Code téléchargé ✓')">PDF</button></td></tr>
+              <tr><td><span class="bdg bdg-b">Petit-déjeuner</span></td><td>Salle PDJ</td><td>67</td><td><span style="color:var(--t5);font-weight:700">4,6★</span></td><td>20 jan.</td><td><button class="btn btn-ghost btn-xs" onclick="showToast('PDF QR Code téléchargé ✓')">PDF</button></td></tr>
+              <tr><td><span class="bdg bdg-g">Réception</span></td><td>Hall</td><td>41</td><td><span style="color:var(--blue);font-weight:700">4,4★</span></td><td>1 fév.</td><td><button class="btn btn-ghost btn-xs" onclick="showToast('PDF QR Code téléchargé ✓')">PDF</button></td></tr>
+              <tr><td><span class="bdg bdg-a">Parking</span></td><td>Parking sous-sol</td><td>12</td><td><span style="color:var(--amber);font-weight:700">3,9★</span></td><td>10 fév.</td><td><button class="btn btn-ghost btn-xs" onclick="showToast('PDF QR Code téléchargé ✓')">PDF</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div id="tab-fb-content" style="display:none">
+        <div class="fbar" style="margin-bottom:14px">
+          <select class="inp" id="inboxFilterRating" onchange="filterInbox()" style="width:120px;padding:7px 12px;font-size:12px"><option>Toutes notes</option><option>≥ 4 (convertible)</option><option>&lt; 4</option></select>
+          <select class="inp" style="width:140px;padding:7px 12px;font-size:12px"><option>Toutes chambres</option><option>Chambre 101</option><option>Chambre 204</option><option>Salle PDJ</option></select>
+        </div>
+        <div class="card card-sm" style="padding:0;overflow:hidden">
+          <table class="tbl">
+            <thead><tr><th>Client</th><th>Source</th><th>Note globale</th><th>Commentaire</th><th>Date</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td>M. Dupont</td><td>Ch. 204</td><td><span style="color:var(--t5);font-weight:700">5,0★</span></td><td style="font-size:11px;color:var(--tx4);max-width:200px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">Séjour parfait, personnel attentionné...</td><td>12 mars</td><td><button class="btn btn-p btn-xs" onclick="inviteClient(this,'M. Dupont','Google')">Inviter à publier</button></td></tr>
+              <tr><td>Mme Bernard</td><td>Salle PDJ</td><td><span style="color:var(--t5);font-weight:700">4,8★</span></td><td style="font-size:11px;color:var(--tx4);max-width:200px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">Petit-déjeuner excellent, grande variété...</td><td>11 mars</td><td><button class="btn btn-p btn-xs" onclick="inviteClient(this,'Mme Bernard','Google')">Inviter à publier</button></td></tr>
+              <tr><td>M. Martin</td><td>Ch. 312</td><td><span style="color:var(--blue);font-weight:700">4,2★</span></td><td style="font-size:11px;color:var(--tx4);max-width:200px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">Chambre confortable, vue agréable...</td><td>10 mars</td><td><button class="btn btn-p btn-xs" onclick="inviteClient(this,'M. Martin','Booking')">Inviter à publier</button></td></tr>
+              <tr><td>Mme Leroy</td><td>Ch. 105</td><td><span style="color:var(--amber);font-weight:700">3,2★</span></td><td style="font-size:11px;color:var(--tx4);max-width:200px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">Chambre correcte mais bruit important...</td><td>9 mars</td><td><span class="bdg bdg-gray">Non éligible</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div id="tab-inv-content" style="display:none">
+        <div class="card card-sm" style="padding:0;overflow:hidden">
+          <table class="tbl">
+            <thead><tr><th>Client</th><th>Plateforme suggérée</th><th>Envoyé via</th><th>Statut</th><th>Date</th></tr></thead>
+            <tbody>
+              <tr><td>M. Dupont</td><td><span style="display:inline-flex;align-items:center;gap:5px;font-weight:600"><span data-plt-logo="google" data-plt-size="18" style="width:18px;height:18px;border-radius:4px;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"></span>Google</span></td><td>Email</td><td><span class="bdg bdg-a">En attente</span></td><td>12 mars</td></tr>
+              <tr><td>Mme Thomas</td><td><span style="display:inline-flex;align-items:center;gap:5px;font-weight:600"><span data-plt-logo="booking" data-plt-size="18" style="width:18px;height:18px;border-radius:4px;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"></span>Booking</span></td><td>SMS</td><td><span class="bdg bdg-g">Publié ✓</span></td><td>8 mars</td></tr>
+              <tr><td>M. Garcia</td><td><span style="display:inline-flex;align-items:center;gap:5px;font-weight:600"><span data-plt-logo="tripadvisor" data-plt-size="18" style="width:18px;height:18px;border-radius:4px;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"></span>Tripadvisor</span></td><td>Email</td><td><span class="bdg bdg-g">Publié ✓</span></td><td>5 mars</td></tr>
+              <tr><td>Mme Petit</td><td><span style="display:inline-flex;align-items:center;gap:5px;font-weight:600"><span data-plt-logo="google" data-plt-size="18" style="width:18px;height:18px;border-radius:4px;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"></span>Google</span></td><td>Lien QR</td><td><span class="bdg bdg-b">Cliqué</span></td><td>3 mars</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══ SIDE PANEL (Review Detail) ═══ -->
+<div class="spanel" id="reviewPanel">
+  <div class="sp-hdr">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div id="panelPlatformIco" style="width:32px;height:32px;border-radius:9px;background:#DBEAFE;color:#2563EB;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">G</div>
+      <div><p id="panelTitle" style="font-size:13px;font-weight:700">Titre</p><p id="panelDate" style="font-size:11px;color:var(--tx4)">Date</p></div>
+    </div>
+    <button onclick="closePanel()" style="background:none;border:none;cursor:pointer;color:var(--tx4);padding:4px"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="sp-body">
+    <div style="background:var(--p0);border:1px solid var(--bdr);border-radius:14px;padding:16px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span id="panelRating" style="font-size:22px;font-weight:800;color:var(--amber)">3,0★</span>
+        <span class="bdg bdg-a">Priorité haute</span>
+      </div>
+      <p id="panelComment" style="font-size:13px;color:var(--tx9);line-height:1.6"></p>
+    </div>
+    <div id="panelIASuggestion" style="display:none;background:linear-gradient(135deg,var(--p0),var(--t0));border:1px solid var(--p1);border-radius:14px;padding:16px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:14px">🤖</span><p style="font-size:12px;font-weight:700;color:var(--p8)">Suggestion IA</p><span class="bdg bdg-p" style="font-size:10px">Mode Standard</span></div>
+      <p id="panelIAText" style="font-size:12.5px;color:var(--tx9);line-height:1.7"></p>
+    </div>
+    <div style="margin-bottom:12px">
+      <div class="inp-label">Votre réponse</div>
+      <textarea class="inp" id="panelResponse" rows="5" placeholder="Rédigez votre réponse ici..."></textarea>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <select class="inp" style="flex:1;padding:7px 10px;font-size:12px"><option>Standard</option><option>Premium</option><option>Luxe</option></select>
+      <button class="btn btn-o btn-sm" onclick="generateAI()"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Suggérer IA</button>
+    </div>
+    <div style="background:#FFF1F2;border:1px solid #FFE4E6;border-radius:12px;padding:12px;margin-bottom:16px;display:flex;align-items:flex-start;gap:8px">
+      <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20" style="color:var(--rose);flex-shrink:0;margin-top:1px"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
+      <p style="font-size:11px;color:var(--rose)">Avis sensible — Note &lt; 3 · Proposez un échange direct (email ou téléphone) dans votre réponse.</p>
+    </div>
+  </div>
+  <div class="sp-ftr">
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost btn-sm" onclick="closePanel()" style="flex:1">Annuler</button>
+      <button class="btn btn-danger btn-sm" onclick="markSuspect()">⚑ Suspect</button>
+      <button class="btn btn-p btn-sm" onclick="publishResponse()" style="flex:1">Publier la réponse</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: ADD PLATFORM ═══ -->
+<div class="modal-bg" id="modalAddPlatform">
+  <div class="modal">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <p style="font-size:16px;font-weight:800;color:var(--tx9)">Ajouter un partenaire</p>
+      <button onclick="closeModal('modalAddPlatform')" style="background:none;border:none;cursor:pointer;color:var(--tx4)"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div style="margin-bottom:16px"><div class="inp-label">Plateforme</div>
+      <select class="inp" id="newPlatformSelect" onchange="updatePlatformFields()">
+        <option value="">— Choisir une plateforme —</option>
+        <option value="hotels_com">Hotels.com</option>
+        <option value="kayak">Kayak</option>
+        <option value="trivago">Trivago</option>
+        <option value="priceline">Priceline</option>
+        <option value="hrs">HRS</option>
+        <option value="custom">Autre (personnalisé)</option>
+      </select>
+    </div>
+    <div id="customPlatformFields" style="display:none;margin-bottom:16px">
+      <div class="inp-label" style="margin-bottom:6px">Nom de la plateforme</div>
+      <input class="inp" placeholder="Ex: MonSite Avis, TripCheck...">
+    </div>
+    <div style="margin-bottom:16px"><div class="inp-label">Méthode d'authentification</div>
+      <select class="inp"><option>OAuth 2.0</option><option>Clé API</option><option>Identifiants (Login/MDP)</option><option>Webhook</option></select>
+    </div>
+    <div style="margin-bottom:16px"><div class="inp-label">Clé API / Token</div>
+      <input class="inp" type="password" placeholder="Entrez votre clé API ou token..."></div>
+    <div style="margin-bottom:20px"><div class="inp-label">ID établissement (si requis)</div>
+      <input class="inp" placeholder="Ex: hotel_id, property_id..."></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('modalAddPlatform')" style="flex:1">Annuler</button>
+      <button class="btn btn-p btn-sm" onclick="addPlatform()" style="flex:1">Connecter</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: ADD QR ═══ -->
+<div class="modal-bg" id="modalAddQR">
+  <div class="modal">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <p style="font-size:16px;font-weight:800;color:var(--tx9)">Générer un QR Code</p>
+      <button onclick="closeModal('modalAddQR')" style="background:none;border:none;cursor:pointer;color:var(--tx4)"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div style="margin-bottom:16px"><div class="inp-label">Type</div>
+      <select class="inp"><option>Chambre</option><option>Petit-déjeuner</option><option>Réception</option><option>Parking</option><option>Spa / Bien-être</option><option>Restaurant</option></select></div>
+    <div style="margin-bottom:16px"><div class="inp-label">Chambre / Espace</div>
+      <input class="inp" placeholder="Ex: 101, Salle PDJ, Hall..."></div>
+    <div style="margin-bottom:20px"><div class="inp-label">Critères de feedback à afficher</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+        <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" checked> Propreté</label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" checked> Équipement</label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" checked> Confort</label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox"> Petit-déjeuner</label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" checked> Service</label>
+      </div>
+    </div>
+    <div id="qrPreviewBox" style="display:none;text-align:center;margin-bottom:16px;padding:16px;background:var(--p0);border-radius:12px;border:1px solid var(--bdr)"><div id="qrCanvas" style="margin:0 auto 8px;display:inline-block"></div><p id="qrLabel" style="font-size:11px;color:var(--tx4)"></p></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('modalAddQR')" style="flex:1">Annuler</button>
+      <button class="btn btn-p btn-sm" id="qrGenBtn" onclick="generateQRCode(this)" style="flex:1">Générer &amp; Télécharger PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ OTA WIDGET (Dashboard only) ═══ -->
+<aside id="otaWidget" style="position:fixed;bottom:18px;right:18px;z-index:35;width:270px">
+  <div class="ota-w">
+    <div style="position:relative;width:80px;height:80px;flex-shrink:0">
+      <canvas id="miniGauge"></canvas>
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none">
+        <span style="font-size:9px;font-weight:600;color:var(--tx4);text-transform:uppercase;letter-spacing:.07em">Score</span>
+        <span style="font-size:26px;font-weight:800;color:var(--tx9);line-height:1;letter-spacing:-1px">78</span>
+      </div>
+    </div>
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:5px"><p style="font-size:13px;font-weight:700">OTA Booster Score</p><span class="bdg bdg-g" style="font-size:9px">BON</span></div>
+      <p style="font-size:11px;color:var(--tx4);line-height:1.5;margin-bottom:8px">Potentiel de croissance basé sur vos performances multi-OTA.</p>
+      <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px"><span style="color:var(--tx4)">Objectif Q2</span><span style="font-weight:700;color:var(--t5)">80+</span></div>
+    </div>
+  </div>
+</aside>
+
+<script>
+// ═══ DATA ═══
+const platforms = [
+  {id:'google',name:'Google Business',logo:'G',color:'#4285F4',bg:'#EAF1FB',desc:'Reviews via Google Business Profile API',status:'connected',account:'grand-hotel@business.google.com',synced:'Il y a 5 min',reviews:668,auth:'OAuth 2.0'},
+  {id:'booking',name:'Booking.com',logo:'Bk',color:'#003580',bg:'#E3EDF9',desc:'Connectivity Partner API',status:'connected',account:'Grand Hôtel FR · ID: 12345',synced:'Il y a 2h',reviews:398,auth:'HMAC API Key'},
+  {id:'tripadvisor',name:'Tripadvisor',logo:'TA',color:'#00AF87',bg:'#E0F5F1',desc:'Content API · Partenaire certifié',status:'connected',account:'Grand Hôtel · Location 987654',synced:'Il y a 12h',reviews:218,auth:'API Key'},
+  {id:'expedia',name:'Expedia',logo:'Ex',color:'#FFC72C',bg:'#FFF8E1',desc:'Partner Central API v3',status:'warning',account:'Property ID: 54321',synced:'Erreur · Re-connexion requise',reviews:145,auth:'OAuth 2.0'},
+  {id:'airbnb',name:'Airbnb',logo:'Ab',color:'#FF5A5F',bg:'#FFF0F0',desc:'Host API · Reviews & Stays',status:'connected',account:'Grand Hôtel Apt · Host ID: 789',synced:'Il y a 6h',reviews:89,auth:'OAuth 2.0'},
+  {id:'agoda',name:'Agoda',logo:'Ag',color:'#5C2D91',bg:'#F3E5F5',desc:'YCS Partner API',status:'connected',account:'Property ID: AG-8890',synced:'Il y a 12h',reviews:72,auth:'API Key'},
+  {id:'ctrip',name:'Ctrip / Trip.com',logo:'Ct',color:'#1E4DA1',bg:'#E8EEFB',desc:'OTA Partner API — Asie-Pacifique',status:'disconnected',account:'—',synced:'Non connecté',reviews:0,auth:'OAuth 2.0'},
+  {id:'hotels_com',name:'Hotels.com',logo:'H·',color:'#D32F2F',bg:'#FFEBEE',desc:'Expedia Group Connect API',status:'warning',account:'Property linked to Expedia',synced:'Synchronisé via Expedia',reviews:31,auth:'Liée Expedia'},
+];
+
+const reviews = [
+  {platform:'Google',hotel:'Hôtel Rivage',rating:3.0,author:'Sophie M.',comment:'Localisation super mais chambre bruyante côté rue...',trust:12,status:'new',date:'Auj · 09:12'},
+  {platform:'Booking',hotel:'Suite familiale',rating:4.0,author:'Jean-Luc B.',comment:'Service excellent, check-in un peu lent.',trust:8,status:'new',date:'Hier · 19:22'},
+  {platform:'Tripadvisor',hotel:'Séjour affaires',rating:2.0,author:'Marc T.',comment:'Wifi instable toute la semaine, inacceptable.',trust:18,status:'new',date:'Il y a 2j'},
+  {platform:'Airbnb',hotel:'Appartement Vue',rating:5.0,author:'Alice D.',comment:'Séjour parfait ! Vue magnifique, très propre.',trust:5,status:'responded',date:'3 mars'},
+  {platform:'Google',hotel:'Standard',rating:1.0,author:'R. Anonymous',comment:'Personnel désagréable, chambre sale.',trust:82,status:'new',date:'2 mars'},
+  {platform:'Expedia',hotel:'Suite Junior',rating:4.5,author:'Claire F.',comment:'Très beau séjour, petit-déjeuner délicieux.',trust:7,status:'responded',date:'1 mars'},
+  {platform:'Agoda',hotel:'Deluxe Double',rating:4.0,author:'Wang Y.',comment:'Good location, clean rooms. Breakfast ok.',trust:11,status:'new',date:'28 fév.'},
+];
+
+
+
+// ═══ PLATFORM SVG LOGOS ═══
+function getPlatformLogo(id, size) {
+  size = size || 32;
+  const s = size;
+  const logos = {
+    google: `<svg width="${s}" height="${s}" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M44.5 20H24v8.5h11.8C34.2 33.9 29.7 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 6 1.1 8.2 3l6-6C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/><path fill="#34A853" d="M6.3 14.7l7 5.1C15.2 15.2 19.2 12 24 12c3.1 0 6 1.1 8.2 3l6-6C34.6 4.1 29.6 2 24 2 16.3 2 9.7 7.4 6.3 14.7z"/><path fill="#FBBC05" d="M24 46c5.5 0 10.4-1.9 14.1-5l-6.5-5.3C29.6 37.3 26.9 38 24 38c-5.7 0-10.5-3.8-12.2-9L5 34.2C8.5 41.3 15.7 46 24 46z"/><path fill="#EA4335" d="M44.5 20H24v8.5h11.8c-.8 2.3-2.4 4.3-4.5 5.7l6.5 5.3C41.5 36.1 45 30.6 45 24c0-1.3-.2-2.7-.5-4z"/></svg>`,
+    booking: `<svg width="${s}" height="${s}" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="10" fill="#003580"/><path d="M13 9h8.5c5 0 8 2.5 8 6.5 0 2.2-1 4-2.8 5.2 2.5 1.2 4 3.3 4 6 0 4.5-3.2 7.3-8.5 7.3H13V9zm8 10c2.2 0 3.5-1 3.5-2.8 0-1.8-1.3-2.7-3.5-2.7h-3v5.5h3zm.5 11.5c2.5 0 3.8-1.1 3.8-3.2 0-2-1.3-3.1-3.8-3.1H18V30.5h3.5z" fill="white"/><circle cx="37" cy="38" r="5" fill="#009DE0"/></svg>`,
+    tripadvisor: `<svg width="${s}" height="${s}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="18" fill="#34E0A1"/><path d="M28 28 Q50 18 72 28" stroke="#1cb87a" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M14 42 Q26 28 38 28" fill="#1cb87a"/><path d="M86 42 Q74 28 62 28" fill="#1cb87a"/><circle cx="34" cy="52" r="20" fill="white"/><circle cx="66" cy="52" r="20" fill="white"/><circle cx="34" cy="52" r="13" fill="#111"/><circle cx="66" cy="52" r="13" fill="#111"/><circle cx="29" cy="47" r="5" fill="white"/><circle cx="61" cy="47" r="5" fill="white"/><circle cx="34" cy="52" r="5.5" fill="#D8291B"/><circle cx="66" cy="52" r="5.5" fill="#4a9e3f"/><ellipse cx="50" cy="80" rx="14" ry="6" fill="#1cb87a"/></svg>`,
+    expedia: `<svg width="${s}" height="${s}" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="10" fill="#1B0780"/><circle cx="24" cy="24" r="16" fill="#2E1FA0"/><path d="M24 10 L27.5 21 L39 21 L29.5 27.5 L33 39 L24 32.5 L15 39 L18.5 27.5 L9 21 L20.5 21 Z" fill="#FFCC00"/></svg>`,
+    airbnb: `<svg width="${s}" height="${s}" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="10" fill="#fff2f2"/><g fill="none" stroke="#FF5A5F" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="13" r="5"/><path d="M19 13 C9 19 9 33 19 38"/><path d="M29 13 C39 19 39 33 29 38"/><path d="M19 38 Q24 44 29 38"/></g></svg>`,
+    agoda: `<svg width="${s}" height="${s}" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="10" fill="#D80027"/><circle cx="22" cy="22" r="9.5" fill="none" stroke="white" stroke-width="3.5"/><line x1="31.5" y1="14" x2="31.5" y2="35" stroke="white" stroke-width="3.5" stroke-linecap="round"/><path d="M22 31.5 Q31.5 36 36 30" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round"/></svg>`,
+    ctrip: `<svg width="${s}" height="${s}" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="10" fill="#007AFF"/><path d="M37 17 C37 10 30 7 23 8 C14 9 9 16 9 24 C9 32 14 39 23 40 C30 41 37 38 37 31" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round"/><circle cx="37" cy="17" r="6" fill="#FF9500"/><circle cx="37" cy="17" r="3" fill="#FF6B00"/><circle cx="19" cy="27" r="2.5" fill="white"/></svg>`,
+    hotels_com: `<svg width="${s}" height="${s}" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="10" fill="#C8102E"/><rect x="10" y="10" width="7.5" height="28" rx="2" fill="white"/><rect x="30.5" y="10" width="7.5" height="28" rx="2" fill="white"/><rect x="10" y="20.5" width="28" height="7" rx="2" fill="white"/></svg>`,
+  };
+  let key = (id+'').toLowerCase()
+    .replace(/[\s\/\.\-]+/g,'_').replace(/[^a-z_]/g,'')
+    .replace('trip_com','ctrip').replace('ctriptrip','ctrip')
+    .replace('hotelcom','hotels_com')
+    .replace('google_business','google')
+    .replace('booking_com','booking');
+  return logos[key] || `<svg width="${s}" height="${s}" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="10" fill="#E2E8F0"/><text x="24" y="31" text-anchor="middle" font-size="20" font-weight="700" font-family="Arial" fill="#94A3B8">${(id+'')[0].toUpperCase()}</text></svg>`;
+}
+
+// ═══ NAV ═══
+function nav(screen) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('act'));
+  document.querySelectorAll('.sn').forEach(b=>b.classList.remove('act'));
+  document.getElementById('s-'+screen).classList.add('act');
+  const buttons = document.querySelectorAll('.sn');
+  buttons.forEach(b=>{if(b.getAttribute('onclick') && b.getAttribute('onclick').includes("'"+screen+"'"))b.classList.add('act')});
+  document.getElementById('otaWidget').style.display = screen==='dashboard'?'block':'none';
+  if(screen==='stats')     setTimeout(initStatsCharts, 50);
+  if(screen==='booster')   setTimeout(initBoosterGauge, 50);
+  if(screen==='integrity') setTimeout(()=>{ intRenderTable(intFilteredReviews); intRenderRules(); intInitChart(); }, 50);
+  closePanel();
+  syncModuleNav(screen);
+  // Update horizontal nav
+  document.querySelectorAll('.erep-hnav-btn').forEach(b=>b.classList.remove('act'));
+  const tabBtn = document.querySelector('.erep-hnav-btn[data-tab="'+screen+'"]');
+  if(tabBtn) tabBtn.classList.add('act');
+}
+
+// ═══ INBOX TABLE ═══
+function renderInbox() {
+  const platformColors = {Google:{bg:'#DBEAFE',color:'#2563EB'},Booking:{bg:'#E3F2FD',color:'#1565C0'},Tripadvisor:{bg:'#D1FAE5',color:'#065F46'},Expedia:{bg:'#FEF3C7',color:'#92400E'},Airbnb:{bg:'#FFE4E6',color:'#9F1239'},Agoda:{bg:'#F3E5F5',color:'#6A1B9A'}};
+  const tbody = document.getElementById('inboxTable');
+  tbody.innerHTML = reviews.map(r=>{
+    const pc = platformColors[r.platform]||{bg:'#F5F4FE',color:'#5248C9'};
+    const ts = r.trust<30?`<span class="rscore rs-low">${r.trust}</span>`:r.trust<60?`<span class="rscore rs-med">${r.trust}</span>`:`<span class="rscore rs-hi">${r.trust}</span>`;
+    const st = r.status==='responded'?`<span class="bdg bdg-g">Répondu</span>`:`<span class="bdg bdg-r">À répondre</span>`;
+    const rc = r.rating>=4?'var(--t5)':r.rating>=3?'var(--amber)':'var(--rose)';
+    return `<tr>
+      <td><div style="display:flex;align-items:center;gap:7px"><span style="width:24px;height:24px;border-radius:6px;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;background:${pc.bg}">${getPlatformLogo(r.platform.toLowerCase(),24)}</span><span style="font-weight:500">${r.platform}</span></div></td>
+      <td><span style="font-weight:700;color:${rc}">${r.rating.toFixed(1)}★</span></td>
+      <td style="color:var(--tx6)">${r.author}</td>
+      <td style="max-width:200px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:11.5px;color:var(--tx4)">${r.comment}</td>
+      <td>${ts}</td>
+      <td>${st}</td>
+      <td style="font-size:11px;color:var(--tx4)">${r.date}</td>
+      <td><button class="btn btn-p btn-xs" onclick="openReview('${r.platform}','${r.hotel}','${r.rating}',\`${r.comment}\`,'${r.date}')">Répondre</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══ PLATFORM GRID ═══
+function renderPlatforms() {
+  const grid = document.getElementById('platformGrid');
+  grid.innerHTML = platforms.map(p=>{
+    const statusMap = {connected:{label:'Connecté',cls:'bdg-g',dot:'dot-g'},warning:{label:'Attention',cls:'bdg-a',dot:'dot-a'},disconnected:{label:'Déconnecté',cls:'bdg-r',dot:'dot-r'}};
+    const s = statusMap[p.status];
+    const btn = p.status==='connected'
+      ? `<button class="btn btn-ghost btn-xs" style="color:var(--rose);border-color:#FFE4E6" onclick="disconnectPlatform('${p.id}')">Déconnecter</button>`
+      : p.status==='warning'
+      ? `<button class="btn btn-p btn-xs" onclick="connectPlatform('${p.id}')">Reconnecter</button>`
+      : `<button class="btn btn-p btn-xs" onclick="connectPlatform('${p.id}')">Connecter</button>`;
+    return `<div class="plt-card ${p.status==='connected'?'connected':''}">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div class="plt-logo" style="background:${p.bg};border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;width:44px;height:44px;flex-shrink:0">${getPlatformLogo(p.id, 36)}</div>
+        <span class="bdg ${s.cls}" style="font-size:10px"><span class="${s.dot}" style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;margin-right:2px"></span>${s.label}</span>
+      </div>
+      <div>
+        <p style="font-size:13px;font-weight:700;color:var(--tx9)">${p.name}</p>
+        <p style="font-size:11px;color:var(--tx4);margin-top:2px">${p.desc}</p>
+      </div>
+      ${p.status!=='disconnected'?`<div style="font-size:11px;color:var(--tx6);background:var(--p0);border-radius:9px;padding:8px 10px;line-height:1.7"><div>${p.account}</div><div style="color:var(--tx4)">Auth: ${p.auth}</div><div style="color:var(--tx4)">${p.reviews} avis · ${p.synced}</div></div>`:'<div style="font-size:11px;color:var(--tx4)">Non connecté — cliquez pour configurer</div>'}
+      <div style="display:flex;align-items:center;justify-content:space-between">${btn}<span style="font-size:10px;color:var(--tx4)">${p.reviews>0?p.reviews+' avis':''}</span></div>
+    </div>`;
+  }).join('')+
+  `<div class="plt-card" style="border:2px dashed var(--bdr);background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;cursor:pointer;gap:10px" onclick="openAddPlatform()">
+    <div style="width:44px;height:44px;border-radius:12px;background:var(--p1);display:flex;align-items:center;justify-content:center;font-size:22px">➕</div>
+    <p style="font-size:13px;font-weight:600;color:var(--p6);text-align:center">Ajouter un partenaire</p>
+    <p style="font-size:11px;color:var(--tx4);text-align:center">Ctrip, Kayak, Hotels.com et plus...</p>
+  </div>`;
+}
+
+// ═══ INTEGRITY MODULE ═══
+const intReviews = [
+  {id:1,platform:'Tripadvisor',author:'Sophie Laurent',rating:5,comment:'L\'hôtel est fabuleux mais la climatisation ne marchait pas du tout dans notre chambre. Personnel peu réactif.',trust:24,reasons:['Incohérence note/texte','Compte créé il y a 9 jours','4 avis publiés en 48h'],status:'suspect',date:'Il y a 2 jours'},
+  {id:2,platform:'Google',author:'Thomas Moreau',rating:1,comment:'Pire expérience de ma vie. Évitez absolument cet établissement, personnel incompétent.',trust:67,reasons:['Langage agressif et diffamatoire','Profil sans historique'],status:'encours',date:'Il y a 3 jours'},
+  {id:3,platform:'Booking',author:'Camille Petit',rating:4,comment:'Très bon rapport qualité prix. Je recommande vivement à ma famille.',trust:81,reasons:['Compte récent'],status:'ignore',date:'Il y a 5 jours'},
+  {id:4,platform:'Tripadvisor',author:'Julien Bernard',rating:3,comment:'Service lent, chambre sale, à éviter absolument. Aucun effort de la direction.',trust:35,reasons:['Incohérence note/contenu','Aucun séjour dans le PMS'],status:'suspect',date:'Il y a 6 jours'},
+  {id:5,platform:'Google',author:'Laura Dubois',rating:5,comment:'Tout était parfait, je n\'ai rien à dire, merci à toute l\'équipe !',trust:12,reasons:['Patterns de faux avis positifs répétés'],status:'suspect',date:'Il y a 8 jours'},
+];
+
+let intFilteredReviews = [...intReviews];
+let intChartInst = null;
+
+function intStars(n, size) {
+  size = size || '14px';
+  let h = '';
+  for(let i=1;i<=5;i++) h += `<span style="color:${i<=n?'#FBBF24':'#E2E8F0'};font-size:${size}">★</span>`;
+  return h;
+}
+
+function intTrustColor(s) {
+  if(s<35) return {bar:'#EF4444',text:'#DC2626',bg:'#FEE2E2'};
+  if(s<65) return {bar:'#F59E0B',text:'#D97706',bg:'#FEF3C7'};
+  return {bar:'#10B981',text:'#059669',bg:'#D1FAE5'};
+}
+
+function intRenderTable(rows) {
+  const tb = document.getElementById('intTableBody');
+  if(!tb) return;
+  tb.innerHTML = rows.map(r => {
+    const tc = intTrustColor(r.trust);
+    const rowCls = r.trust>=60?'row-red':r.trust>=35?'row-amber':'';
+    const pill = r.status==='suspect'?'<span class="int-pill suspect">Suspect</span>':
+                 r.status==='encours'?'<span class="int-pill encours">En cours</span>':
+                 '<span class="int-pill ignore">Ignoré</span>';
+    const pltLogo = `<span style="width:22px;height:22px;border-radius:5px;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">${getPlatformLogo(r.platform.toLowerCase(),22)}</span>`;
+    const tags = r.reasons.map(rs=>`<span class="int-tag">${rs}</span>`).join('');
+    return `<tr class="${rowCls}" style="cursor:pointer" onclick="intOpenDrawer(${r.id})">
+      <td><div style="display:flex;align-items:center;gap:7px">${pltLogo}<span style="font-size:12px;font-weight:600;color:var(--tx9)">${r.platform}</span></div></td>
+      <td><div style="font-weight:600;color:var(--tx9);font-size:12.5px">${r.author}</div><div style="font-size:10.5px;color:var(--tx4);margin-top:1px">${r.date}</div></td>
+      <td>${intStars(r.rating,'12px')}</td>
+      <td style="max-width:220px"><div style="font-size:11.5px;color:var(--tx6);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.5">${r.comment}</div></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="int-trust-bar"><div class="int-trust-fill" style="width:${r.trust}%;background:${tc.bar}"></div></div>
+          <span style="font-size:11.5px;font-weight:700;color:${tc.text};font-feature-settings:'tnum';min-width:22px">${r.trust}</span>
+        </div>
+      </td>
+      <td><div style="display:flex;flex-wrap:wrap;gap:4px">${tags}</div></td>
+      <td>${pill}</td>
+      <td style="text-align:right;padding-right:22px">
+        <button onclick="event.stopPropagation();intOpenDrawer(${r.id})" style="display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;color:var(--p5);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;transition:gap .15s">
+          Détail <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function intFilterTable() {
+  const q = (document.getElementById('intSearch')||{value:''}).value.toLowerCase();
+  intFilteredReviews = q ? intReviews.filter(r=>r.author.toLowerCase().includes(q)||r.comment.toLowerCase().includes(q)) : [...intReviews];
+  intRenderTable(intFilteredReviews);
+}
+
+function intOpenDrawer(id) {
+  const r = intReviews.find(x=>x.id===id); if(!r) return;
+  const tc = intTrustColor(r.trust);
+  document.getElementById('intDrawerPlt').textContent = r.platform;
+  document.getElementById('intDrawerAuthor').textContent = r.author;
+  document.getElementById('intDrawerStars').innerHTML = intStars(r.rating, '20px');
+  const scoreEl = document.getElementById('intDrawerScore');
+  scoreEl.textContent = r.trust;
+  scoreEl.style.color = tc.text;
+  document.getElementById('intDrawerBar').style.width = r.trust+'%';
+  document.getElementById('intDrawerBar').style.background = `linear-gradient(90deg,${tc.bar},${tc.bar}CC)`;
+  document.getElementById('intDrawerComment').textContent = '"' + r.comment + '"';
+  document.getElementById('intDrawerDate').textContent = 'Publié ' + r.date + ' · via mobile';
+  document.getElementById('intDrawerReasons').innerHTML = r.reasons.map((rs,i)=>`
+    <div style="display:flex;gap:12px;align-items:flex-start">
+      <div style="width:18px;height:18px;border-radius:5px;background:${i===r.reasons.length-1?'#FEE2E2':'#FEF3C7'};color:${i===r.reasons.length-1?'#DC2626':'#D97706'};font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">${i+1}</div>
+      <div style="font-size:12px;color:var(--tx6);line-height:1.5">${rs}</div>
+    </div>`).join('');
+  document.getElementById('intDrawer').classList.add('open');
+  document.getElementById('intOverlay').classList.add('open');
+}
+
+function intCloseDrawer() {
+  document.getElementById('intDrawer').classList.remove('open');
+  document.getElementById('intOverlay').classList.remove('open');
+}
+
+function intTriggerAnalysis() {
+  showToast('Analyse IA terminée · 3 nouveaux suspects détectés ✓');
+}
+
+function intGenerateReport() { intGenReport(); }
+function intSuggestResponse() { showToast('Réponse diplomatique IA générée ✓'); }
+function intMarkReliable() { showToast('Avis marqué comme fiable ✓'); setTimeout(intCloseDrawer, 1200); }
+function intReportReview() { showToast('Avis signalé aux plateformes ✓'); setTimeout(intCloseDrawer, 1200); }
+
+function intPeriod(el, key) {
+  document.querySelectorAll('.int-period button').forEach(b=>b.classList.remove('act'));
+  el.classList.add('act');
+}
+
+function intGraphToggle(mode) {
+  const b0=document.getElementById('int-gt-0'), b1=document.getElementById('int-gt-1');
+  if(mode===0){b0.style.background='var(--tx9)';b0.style.color='#fff';b1.style.background='#fff';b1.style.color='var(--tx6)'}
+  else{b1.style.background='var(--tx9)';b1.style.color='#fff';b0.style.background='#fff';b0.style.color='var(--tx6)'}
+}
+
+function intToggleRules() {
+  const el = document.getElementById('intRulesContent');
+  const ico = document.getElementById('intRulesIcon');
+  const open = el.style.display === 'grid';
+  el.style.display = open ? 'none' : 'grid';
+  ico.style.transform = open ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
+function intRenderRules() {
+  const c = document.getElementById('intRulesContent'); if(!c) return;
+  const rules = [
+    {label:'Incohérence note / texte',desc:'Détecte les contradictions sémantiques',on:true},
+    {label:'Compte récent ou multi-avis',desc:'Compte < 30 jours ou trop d\'avis rapidement',on:true},
+    {label:'Vérification séjour PMS',desc:'Croisement avec les réservations réelles',on:false},
+    {label:'Analyse sémantique négative',desc:'Mots-clés agressifs ou diffamatoires',on:true},
+  ];
+  c.innerHTML = rules.map(r=>`
+    <div class="int-rule">
+      <div>
+        <div style="font-size:12.5px;font-weight:600;color:var(--tx9)">${r.label}</div>
+        <div style="font-size:11px;color:var(--tx4);margin-top:2px">${r.desc}</div>
+      </div>
+      <label class="int-toggle">
+        <input type="checkbox" ${r.on?'checked':''}/>
+        <span class="int-toggle-sl"></span>
+      </label>
+    </div>`).join('');
+}
+
+function intInitChart() {
+  const ctx = document.getElementById('intTrendChart'); if(!ctx) return;
+  if(intChartInst) { intChartInst.destroy(); intChartInst=null; }
+  const labels = ['13','14','15','16','17','18','19','20','21','22','23','24','25','26'];
+  intChartInst = new Chart(ctx, {
+    data: {
+      labels,
+      datasets: [
+        {type:'bar',label:'Suspects',data:[2,4,1,5,3,2,6,3,1,4,7,2,5,3],
+          backgroundColor:'rgba(239,68,68,.75)',borderRadius:5,barThickness:14},
+        {type:'line',label:'Moyenne',data:[4,6,5,7,4,5,8,6,4,5,9,5,6,7],
+          borderColor:'#0EA5E9',borderWidth:2.5,tension:.35,pointRadius:0,fill:false}
+      ]
+    },
+    options:{
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,backgroundColor:'#0F172A',padding:10,cornerRadius:8,
+        callbacks:{label:c=>`  ${c.dataset.label}: ${c.raw}`}}},
+      scales:{
+        y:{grid:{color:'#F1F5F9',drawBorder:false},ticks:{color:'#94A3B8',font:{size:10,family:'Inter'},stepSize:2}},
+        x:{grid:{display:false},ticks:{color:'#94A3B8',font:{size:10,family:'Inter'}}}
+      }
+    }
+  });
+}
+
+// Hook into nav() to init chart when integrity screen activated
+
+
+
+// ═══ REVIEW PANEL ═══
+function openReview(platform, hotel, rating, comment, date) {
+  const platformColors = {Google:{bg:'#DBEAFE',color:'#2563EB'},Booking:{bg:'#E3F2FD',color:'#1565C0'},Tripadvisor:{bg:'#D1FAE5',color:'#065F46'},Expedia:{bg:'#FEF3C7',color:'#92400E'},Airbnb:{bg:'#FFE4E6',color:'#9F1239'},Agoda:{bg:'#F3E5F5',color:'#6A1B9A'}};
+  const pc = platformColors[platform]||{bg:'#F5F4FE',color:'#5248C9'};
+  document.getElementById('panelPlatformIco').style.background='transparent';
+  document.getElementById('panelPlatformIco').innerHTML=getPlatformLogo(platform.toLowerCase(),34);
+  document.getElementById('panelTitle').textContent = `${platform} · ${hotel}`;
+  document.getElementById('panelDate').textContent = date;
+  const r = parseFloat(rating);
+  const rc = r>=4?'var(--t5)':r>=3?'var(--amber)':'var(--rose)';
+  document.getElementById('panelRating').textContent = r.toFixed(1)+'★';
+  document.getElementById('panelRating').style.color = rc;
+  document.getElementById('panelComment').textContent = comment;
+  document.getElementById('panelResponse').value = '';
+  document.getElementById('panelIASuggestion').style.display = 'none';
+  document.getElementById('reviewPanel').classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('reviewPanel').classList.remove('open');
+}
+
+function generateAI() {
+  const suggestions = [
+    "Chère cliente, chère cliente,\n\nNous vous remercions sincèrement d'avoir pris le temps de nous faire part de votre expérience. Votre retour est précieux et nous permet de nous améliorer continuellement.\n\nNous sommes navrés d'apprendre que votre séjour n'a pas pleinement répondu à vos attentes. Les points que vous soulignez font l'objet de toute notre attention. Nous vous invitons à nous contacter directement à direction@grandhotel.fr afin que nous puissions en discuter personnellement.\n\nNous espérons avoir l'opportunité de vous accueillir à nouveau pour vous offrir l'expérience que vous méritez.\n\nCordialement,\nL'équipe de direction · Grand Hôtel",
+    "Madame, Monsieur,\n\nMerci pour ce retour qui nous tient à cœur. Nous sommes sensibles à l'attention que vous portez à la qualité de nos services.\n\nVos remarques ont été transmises à nos équipes compétentes. Si vous souhaitez évoquer votre séjour plus en détail, notre Guest Relations est disponible à votre écoute.\n\nNous vous souhaitons une excellente continuation et espérons vous revoir bientôt.\n\nBien à vous,\nGuest Relations · Grand Hôtel"
+  ];
+  document.getElementById('panelIAText').textContent = suggestions[Math.floor(Math.random()*suggestions.length)];
+  document.getElementById('panelIASuggestion').style.display = 'block';
+  document.getElementById('panelResponse').value = document.getElementById('panelIAText').textContent;
+}
+
+function publishResponse() {
+  const resp = document.getElementById('panelResponse').value;
+  if(!resp.trim()){alert('Veuillez rédiger ou générer une réponse.');return;}
+  closePanel();
+  showToast('Réponse publiée avec succès ✓');
+}
+
+function markSuspect() {
+  closePanel();
+  showToast('Avis marqué comme suspect et transmis au module Intégrité');
+}
+
+// ═══ MODALS ═══
+function openAddPlatform() { document.getElementById('modalAddPlatform').classList.add('open'); }
+function openAddQR() { document.getElementById('modalAddQR').classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function updatePlatformFields() {
+  const v = document.getElementById('newPlatformSelect').value;
+  document.getElementById('customPlatformFields').style.display = v==='custom'?'block':'none';
+}
+function addPlatform() {
+  closeModal('modalAddPlatform');
+  showToast('Connexion en cours… Redirection OAuth');
+}
+function connectPlatform(id) {
+  showToast('Redirection OAuth en cours… Fenêtre sécurisée ouverte');
+  setTimeout(()=>{
+    const p = platforms.find(pl=>pl.id===id);
+    if(p && p.status!=='connected') {
+      p.status = 'connected';
+      p.synced = 'Connecté à l\'instant';
+      renderPlatforms();
+      showToast(p.name+' connecté avec succès ✓');
+    }
+  }, 1800);
+}
+function disconnectPlatform(id) {
+  const p = platforms.find(pl=>pl.id===id);
+  if(!p) return;
+  if(!confirm('Déconnecter '+p.name+' ?')) return;
+  p.status = 'disconnected';
+  p.reviews = 0;
+  renderPlatforms();
+  showToast(p.name+' déconnecté');
+}
+
+// ═══ TABS ═══
+function switchTab(tab) {
+  ['qr','fb','inv'].forEach(t=>{
+    document.getElementById('tab-'+t+'-content').style.display = t===tab?'block':'none';
+    const btn = document.getElementById('tab-'+t);
+    btn.classList.toggle('btn-p', t===tab);
+    btn.classList.toggle('btn-ghost', t!==tab);
+    btn.style.background = t===tab?'':' transparent';
+    btn.style.border = t===tab?'':'none';
+  });
+}
+
+// ═══ TOAST ═══
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#0F172A;color:#fff;padding:10px 20px;border-radius:8px;font-size:12.5px;font-weight:600;z-index:9999;box-shadow:0 8px 24px rgba(30,27,84,.3);animation:fadeUp .3s ease;font-family:Inter,sans-serif';
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 2800);
+}
+
+// ═══ CHARTS ═══
+let chartsInit = false;
+function initCharts() {
+  if(chartsInit) return;
+  chartsInit = true;
+  const p5='#4361EE', t5='#059669', t4='#10B981', bl='#2563EB', am='#D97706', dk='#0F172A';
+
+  // Line chart
+  new Chart(document.getElementById('lineChart'), {
+    type:'line',
+    data:{
+      labels:['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'],
+      datasets:[
+        {label:'Google',data:[4.1,4.0,4.2,4.3,4.4,4.3,4.5,4.4,4.3,4.4,4.5,4.6],borderColor:bl,backgroundColor:'rgba(59,130,246,.06)',tension:.4,pointRadius:0,borderWidth:2.5,fill:true},
+        {label:'Booking',data:[4.0,3.9,4.0,4.1,4.2,4.2,4.1,4.3,4.2,4.3,4.2,4.4],borderColor:t5,backgroundColor:'rgba(13,201,164,.06)',tension:.4,pointRadius:0,borderWidth:2.5,fill:true},
+        {label:'Tripadvisor',data:[4.3,4.2,4.1,4.2,4.3,4.1,4.0,4.2,4.3,4.4,4.3,4.3],borderColor:p5,backgroundColor:'rgba(109,99,232,.06)',tension:.4,pointRadius:0,borderWidth:2.5,fill:true},
+        {label:'Airbnb',data:[3.9,4.0,4.0,4.1,4.2,4.1,4.0,4.1,4.0,4.2,4.1,4.1],borderColor:am,backgroundColor:'rgba(245,158,11,.05)',tension:.4,pointRadius:0,borderWidth:2,fill:true},
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,backgroundColor:dk,padding:10,cornerRadius:10,callbacks:{label:c=>`  ${c.dataset.label}: ${c.formattedValue}★`}}},scales:{y:{beginAtZero:false,suggestedMin:3.5,suggestedMax:5,grid:{color:'rgba(226,232,240,.6)',drawBorder:false},ticks:{color:'#94A3B8',font:{size:10,family:'Inter'},callback:v=>v.toFixed(1)}},x:{grid:{display:false},ticks:{color:'#94A3B8',font:{size:10,family:'Inter'}}}}}
+  });
+
+  // Pie
+  new Chart(document.getElementById('pieChart'), {
+    type:'doughnut',
+    data:{labels:['5★','4★','3★','2★','1★'],datasets:[{data:[52,31,10,5,2],backgroundColor:[t5,bl,p5,am,'#F43F5E'],borderWidth:0,hoverOffset:5}]},
+    options:{responsive:true,maintainAspectRatio:true,cutout:'62%',plugins:{legend:{display:false},tooltip:{backgroundColor:dk,padding:8,cornerRadius:8,callbacks:{label:c=>`  ${c.label}: ${c.parsed}%`}}}}
+  });
+
+  // Mini gauge
+  new Chart(document.getElementById('miniGauge'), {
+    type:'doughnut',
+    data:{datasets:[{data:[78,22],backgroundColor:[p5,'#EDE9FE'],borderWidth:0}]},
+    options:{rotation:-90,circumference:180,responsive:true,maintainAspectRatio:false,cutout:'70%',plugins:{legend:{display:false},tooltip:{enabled:false}}}
+  });
+
+  // Radar chart
+  new Chart(document.getElementById('radarChart'), {
+    type:'bar',
+    data:{
+      labels:['1 mar','5 mar','10 mar','15 mar','20 mar','25 mar'],
+      datasets:[
+        {label:'Propreté',data:[2,3,4,5,6,7],backgroundColor:'rgba(244,63,94,.7)',borderRadius:4},
+        {label:'Bruit',data:[1,2,2,3,4,5],backgroundColor:'rgba(245,158,11,.7)',borderRadius:4},
+        {label:'Wifi',data:[0,1,1,2,3,4],backgroundColor:'rgba(59,130,246,.7)',borderRadius:4},
+        {label:'Équipement',data:[1,1,2,2,2,3],backgroundColor:'rgba(109,99,232,.7)',borderRadius:4},
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:dk,padding:8,cornerRadius:8}},scales:{x:{stacked:true,grid:{display:false},ticks:{color:'#94A3B8',font:{size:10}}},y:{stacked:true,grid:{color:'rgba(226,232,240,.6)',drawBorder:false},ticks:{color:'#94A3B8',font:{size:10}}}}}
+  });
+}
+
+function initStatsCharts() {
+  const p5='#4361EE', t5='#059669', t4='#10B981', bl='#2563EB', am='#D97706', dk='#0F172A';
+  if(!document.getElementById('volChart')._chart) {
+    const vc = new Chart(document.getElementById('volChart'),{type:'bar',data:{labels:['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'],datasets:[{label:'Avis',data:[78,92,105,88,112,98,134,156,118,124,139,140],backgroundColor:p5+'B3',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:dk,padding:8,cornerRadius:8}},scales:{x:{grid:{display:false},ticks:{color:'#94A3B8',font:{size:10}}},y:{grid:{color:'rgba(226,232,240,.6)',drawBorder:false},ticks:{color:'#94A3B8',font:{size:10}}}}}});
+    document.getElementById('volChart')._chart = vc;
+  }
+  if(!document.getElementById('barChart')._chart) {
+    const bc = new Chart(document.getElementById('barChart'),{type:'bar',data:{labels:['Google','Booking','Tripadvisor','Expedia','Airbnb','Agoda'],datasets:[{label:'Note',data:[4.6,4.4,4.3,4.2,4.1,4.5],backgroundColor:[bl,bl+'99',t5+'99',am+'99','#F43F5E99',p5+'99'],borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:dk,padding:8,cornerRadius:8,callbacks:{label:c=>`  Note: ${c.raw}★`}}},scales:{x:{grid:{display:false},ticks:{color:'#94A3B8',font:{size:10}}},y:{beginAtZero:false,suggestedMin:3.5,suggestedMax:5,grid:{color:'rgba(226,232,240,.6)',drawBorder:false},ticks:{color:'#94A3B8',font:{size:10},callback:v=>v.toFixed(1)}}}}});
+    document.getElementById('barChart')._chart = bc;
+  }
+}
+
+function initBoosterGauge() {
+  if(document.getElementById('otaGauge')._chart) return;
+  const p5='#4361EE', t5='#059669', dk='#0F172A';
+  const gc = document.getElementById('otaGauge').getContext('2d');
+  const g = gc.createLinearGradient(0,0,130,0);
+  g.addColorStop(0,p5); g.addColorStop(1,t5);
+  const ch = new Chart(gc,{type:'doughnut',data:{datasets:[{data:[78,22],backgroundColor:[g,'#EDE9FE'],borderWidth:0}]},options:{rotation:-90,circumference:180,responsive:true,maintainAspectRatio:false,cutout:'72%',plugins:{legend:{display:false},tooltip:{enabled:false}}}});
+  document.getElementById('otaGauge')._chart = ch;
+}
+
+// ═══ INIT ═══
+document.addEventListener('DOMContentLoaded', ()=>{
+  renderInbox();
+  renderPlatforms();
+  document.querySelectorAll('[data-plt-logo]').forEach(el=>{
+    const id = el.getAttribute('data-plt-logo');
+    const size = parseInt(el.getAttribute('data-plt-size')||'28');
+    el.innerHTML = getPlatformLogo(id, size);
+  });
+  setTimeout(initCharts, 100);
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closePanel(); closeRadarPanel(); document.querySelectorAll('.modal-bg').forEach(m=>m.classList.remove('open')); }});
+});
+
+// ═══════════════════════════════════════════════════════════════
+// RADAR IA — ISSUE PANEL + TASK CREATION SYSTEM
+// ═══════════════════════════════════════════════════════════════
+
+// ── DATA ────────────────────────────────────────────────────────
+const RADAR_ISSUES = [
+  {
+    id: 0, emoji: '🧹',
+    title: 'Propreté insuffisante — Chambre 205',
+    category: 'Propreté', location: 'Chambre 205', floor: 'Étage 2 · Aile Est',
+    score: 84, severity: 'critical', status: 'Ouvert', mentions: 7,
+    period: '14 fév. → 13 mars 2026',
+    keywords: ['propreté','literie','salle de bain','sol','nettoyage'],
+    aiInsight: '7 avis mentionnent une propreté insuffisante dans cette chambre sur 30 jours. Points cités : literie, salle de bain, sol. Corrélation 91% avec séjours week-end. Dernière mention : il y a 2h (Google, 3★).',
+    aiReco: 'Planifier un nettoyage approfondi et vérifier les produits utilisés. Inspecter la literie et signaler l\'usure au responsable des achats.',
+    impact: '−0,2 point sur note Google si non traité',
+    deadline: "Aujourd'hui avant 14h",
+    recurrence: '3ème signalement ce mois',
+    sources: [
+      { icon: '📱', label: 'QR Code Chambre', time: 'Il y a 2h', quote: 'La chambre n\'était pas vraiment propre à notre arrivée, literie douteuse.', tag: 'Google · 3★' },
+      { icon: '🌐', label: 'Booking.com', time: 'Hier', quote: 'Chambre pas nettoyée correctement, traces sur les vitres.', tag: 'Booking · 5/10' },
+      { icon: '🌐', label: 'Google Maps', time: 'Il y a 3j', quote: 'Salle de bain laissait à désirer malgré le tarif élevé.', tag: 'Google · 2★' },
+    ],
+    freqData: [1,2,1,3,4,5,7],
+    history: [
+      { dot:'rose', date:"Auj. 09:12", text:'Seuil critique dépassé — Radar IA déclenché' },
+      { dot:'amber', date:'Il y a 3j', text:'5ème mention enregistrée' },
+      { dot:'gray', date:'Il y a 10j', text:'1ère détection du pattern' },
+    ]
+  },
+  {
+    id: 1, emoji: '🔊',
+    title: 'Bruit nocturne — Chambres 301–306',
+    category: 'Bruit', location: 'Ch. 301–306', floor: 'Étage 3 · Aile Rue',
+    score: 61, severity: 'high', status: 'En cours', mentions: 5,
+    period: '5 fév. → 13 mars 2026',
+    keywords: ['bruit','nocturne','couloir','porte','nuisance','nuit'],
+    aiInsight: '5 mentions de bruit entre 23h et 7h, côté rue. Concentrées sur les chambres 301 à 306 (même façade). Possible vibration des fenêtres ou bruits structurels.',
+    aiReco: 'Vérifier les joints des fenêtres côté rue sur cet étage. Proposer aux clients sensibles au bruit des chambres côté cour lors du check-in.',
+    impact: '−0,1 point note Tripadvisor estimé',
+    deadline: 'Dans les 24h',
+    recurrence: '2ème signalement',
+    sources: [
+      { icon: '📱', label: 'QR Code Ch. 303', time: 'Ce matin', quote: 'Bruit de la rue toute la nuit, impossible de dormir.', tag: 'Interne' },
+      { icon: '🌐', label: 'Tripadvisor', time: 'Il y a 2j', quote: 'Séjour gâché par le bruit extérieur, fenêtres mal isolées.', tag: 'TripAdvisor · 2★' },
+    ],
+    freqData: [0,1,0,2,1,3,5],
+    history: [
+      { dot:'amber', date:'Auj. 08:40', text:'Confirmation via QR Code — seuil atteint' },
+      { dot:'gray', date:'Il y a 2j', text:'Avis Tripadvisor catégorisé "bruit"' },
+    ]
+  },
+  {
+    id: 2, emoji: '📶',
+    title: 'Wifi instable — Étage 3',
+    category: 'Wifi', location: 'Étage 3', floor: 'Étage 3 complet',
+    score: 58, severity: 'high', status: 'En cours', mentions: 4,
+    period: '20 fév. → 13 mars 2026',
+    keywords: ['wifi','réseau','connexion','internet','instable'],
+    aiInsight: '4 mentions de wifi instable concentrées sur l\'étage 3. Perte de signal signalée entre 20h et 23h. Possible interférence ou point d\'accès défaillant.',
+    aiReco: 'Vérifier l\'état du point d\'accès Wifi de l\'étage 3. Tester la couverture en heure de pointe. Envisager l\'ajout d\'un amplificateur.',
+    impact: '−0,1 point note globale estimé',
+    deadline: 'Dans les 24h',
+    recurrence: '1er signalement groupé',
+    sources: [
+      { icon: '📱', label: 'QR Code Ch. 315', time: 'Hier soir', quote: 'Wifi quasi inutilisable après 21h dans la chambre.', tag: 'Interne' },
+      { icon: '🌐', label: 'Google', time: 'Il y a 4j', quote: 'Connexion internet très lente, dommage pour un séjour pro.', tag: 'Google · 3★' },
+    ],
+    freqData: [0,0,1,1,2,3,4],
+    history: [
+      { dot:'amber', date:'Hier 21:15', text:'Pic de mentions détecté' },
+      { dot:'gray', date:'Il y a 4j', text:'Première occurrence Google' },
+    ]
+  },
+  {
+    id: 3, emoji: '🚿',
+    title: 'Salle de bain défectueuse — Chambre 112',
+    category: 'Salle de bain', location: 'Chambre 112', floor: 'Étage 1 · Aile Jardin',
+    score: 45, severity: 'medium', status: 'Ouvert', mentions: 3,
+    period: '1 mar. → 13 mars 2026',
+    keywords: ['fuite','robinet','salle de bain','douche','plomberie','eau'],
+    aiInsight: '3 mentions de problèmes dans la salle de bain de la chambre 112. Mots-clés : robinet qui fuit, pression faible, évacuation lente.',
+    aiReco: 'Intervention plomberie recommandée. Vérifier joint du mitigeur et siphon d\'évacuation. Réparation à planifier en dehors des périodes d\'occupation.',
+    impact: 'Risque dégât des eaux si non traité',
+    deadline: 'Dans les 48h',
+    recurrence: '1er signalement',
+    sources: [
+      { icon: '📱', label: 'QR Code Ch. 112', time: 'Il y a 1j', quote: 'Le robinet de la douche fuit en continu, pression très faible.', tag: 'Interne' },
+      { icon: '🌐', label: 'Booking.com', time: 'Il y a 3j', quote: 'Problème avec l\'évacuation de la douche, eau qui stagne.', tag: 'Booking · 6/10' },
+    ],
+    freqData: [0,0,0,1,2,2,3],
+    history: [
+      { dot:'amber', date:'Hier 14:20', text:'Signalement QR confirmé' },
+      { dot:'gray', date:'Il y a 3j', text:'Avis Booking catégorisé "plomberie"' },
+    ]
+  },
+  {
+    id: 4, emoji: '☕',
+    title: 'Qualité buffet petit-déjeuner',
+    category: 'Petit-déjeuner', location: 'Salle PDJ', floor: 'Rez-de-chaussée',
+    score: 28, severity: 'low', status: 'Surveillé', mentions: 2,
+    period: '1 mar. → 13 mars 2026',
+    keywords: ['buffet','nourriture','variété','petit-déjeuner','fb','qualité','fruits'],
+    aiInsight: '2 mentions de manque de variété au buffet. Score faible, pas encore critique. Tendance à surveiller — baisse de 8% de satisfaction PDJ vs mois précédent.',
+    aiReco: 'Envisager l\'ajout de 2 produits locaux ou faits-maison. Rotation hebdomadaire conseillée pour maintenir l\'intérêt.',
+    impact: 'Impact marginal actuel',
+    deadline: 'Cette semaine',
+    recurrence: '1er signal',
+    sources: [
+      { icon: '📱', label: 'QR Code Salle PDJ', time: 'Avant-hier', quote: 'Buffet un peu tristounet, peu de choix de viennoiseries.', tag: 'Interne' },
+      { icon: '🌐', label: 'Google', time: 'Il y a 5j', quote: 'Petit-déjeuner décevant pour le standing de l\'hôtel.', tag: 'Google · 3★' },
+    ],
+    freqData: [0,0,0,1,1,1,2],
+    history: [
+      { dot:'green', date:'Il y a 2j', text:'Détection automatique — seuil bas atteint' },
+      { dot:'gray', date:'Il y a 5j', text:'Première mention Google' },
+    ]
+  }
+];
+
+// ── DEPARTMENT MAPPING ───────────────────────────────────────────
+const DEPT_RULES = [
+  { dept:'Maintenance',          icon:'🔧', color:'var(--orange)',  bg:'var(--orange-bg)', bdr:'var(--orange-bdr)',
+    keywords:['fuite','plomberie','pression','robinet','douche','climatisation','thermostat','température','wifi','réseau','connexion','internet','électricité','ascenseur','panne','réparation','ventilation','gaz','équipement','serrure','fenêtre','joint'] },
+  { dept:'Housekeeping',         icon:'🧹', color:'var(--p6)',      bg:'var(--p0)',         bdr:'var(--p1)',
+    keywords:['propreté','sale','nettoyage','linge','serviette','odeur','poussière','ménage','draps','literie','sol','trace'] },
+  { dept:'Gouvernante',          icon:'📋', color:'#7C3AED',        bg:'#F5F3FF',           bdr:'#DDD6FE',
+    keywords:['bruit','couloir','porte','ferme-porte','standard','dégradé','organisation','étage','inspect','circulation','nuisance','nocturne','nuit'] },
+  { dept:'Service Petit-déjeuner',icon:'☕',color:'var(--amber)',   bg:'var(--amber-bg)',   bdr:'var(--amber-bdr)',
+    keywords:['buffet','nourriture','variété','fb','petit-déjeuner','déjeuner','cuisine','repas','menu','fruits','boisson','viennoiserie','qualité'] },
+  { dept:'Réception',            icon:'🛎️', color:'var(--t5)',      bg:'var(--t0)',         bdr:'var(--t1)',
+    keywords:['accueil','check-in','check-out','attente','plainte','service','réclamation','courtoisie','téléphone','attitude','client'] },
+  { dept:'Direction',            icon:'📊', color:'var(--rose)',    bg:'var(--rose-bg)',    bdr:'var(--rose-bdr)',
+    keywords:['récurrent','stratégique','réputation','tendance','systémique','global','sécurité','incident','escalade'] }
+];
+
+// Escalation rules: if score >= threshold, bump to higher dept
+const ESCALATION = [
+  { from:'Housekeeping', to:'Gouvernante', condition: i => i.mentions >= 3 },
+  { from:'Maintenance',  to:'Direction',   condition: i => i.score >= 70 && i.keywords.some(k=>['fuite','serrure'].includes(k)) },
+  { from:'Réception',    to:'Direction',   condition: i => i.mentions > 5 },
+  { from:'Gouvernante',  to:'Maintenance', condition: i => i.score >= 60 }
+];
+
+function detectDepartment(issue) {
+  const text = [...(issue.keywords||[]), issue.title, issue.category].join(' ').toLowerCase();
+  let best = DEPT_RULES[0], bestScore = -1;
+  for (const r of DEPT_RULES) {
+    let s = 0;
+    for (const kw of r.keywords) if (text.includes(kw)) s++;
+    if (s > bestScore) { bestScore = s; best = r; }
+  }
+  // Check escalation
+  for (const esc of ESCALATION) {
+    if (best.dept === esc.from && esc.condition(issue)) {
+      best = DEPT_RULES.find(r=>r.dept===esc.to) || best;
+      break;
+    }
+  }
+  return best;
+}
+
+// Co-assignment rules (FYI notification)
+function getCoAssignment(issue, primaryDept) {
+  if (issue.category === 'Propreté' && issue.location.toLowerCase().includes('pdj')) return 'Service Petit-déjeuner';
+  if (primaryDept.dept === 'Maintenance' && issue.score >= 70) return 'Direction';
+  if (issue.keywords.some(k=>['serrure','sécurité','incident'].includes(k))) return 'Direction';
+  return null;
+}
+
+// ── PRIORITY CALCULATION ─────────────────────────────────────────
+function calcPriority(issue) {
+  // Score: 40% risk score, 35% frequency, 25% urgency
+  const riskW  = (issue.score / 100) * 40;
+  const freqW  = Math.min(issue.mentions / 7, 1) * 35;
+  // Security override
+  if (issue.keywords.some(k=>['serrure','fuite active','incident','sécurité'].includes(k))) {
+    return { level:'critical', label:'Critique', color:'var(--rose)', bg:'var(--rose-bg)', bdr:'var(--rose-bdr)', deadline:"Aujourd'hui" };
+  }
+  const total = riskW + freqW;
+  if (total >= 40 || issue.score >= 70)  return { level:'critical', label:'Critique',   color:'var(--rose)',   bg:'var(--rose-bg)',   bdr:'var(--rose-bdr)',   deadline:"Aujourd'hui" };
+  if (total >= 28 || issue.score >= 45)  return { level:'high',     label:'Haute',      color:'var(--orange)', bg:'var(--orange-bg)', bdr:'var(--orange-bdr)', deadline:'Dans les 24h' };
+  if (total >= 16 || issue.score >= 25)  return { level:'medium',   label:'Moyenne',    color:'var(--amber)',  bg:'var(--amber-bg)',  bdr:'var(--amber-bdr)',  deadline:'Dans les 48h' };
+  return                                          { level:'low',      label:'Faible',     color:'var(--t5)',     bg:'var(--t0)',        bdr:'var(--t1)',         deadline:'Cette semaine' };
+}
+
+// ── TASK ID GENERATOR ────────────────────────────────────────────
+let taskCounter = 847;
+function nextTaskId() { return `TK-2024-0${++taskCounter}`; }
+
+// ── RADAR PANEL ──────────────────────────────────────────────────
+let currentRadarIssue = null;
+const SEV_COLORS = {
+  critical:{ badge:'var(--rose)',   bg:'var(--rose-bg)',   bdr:'var(--rose-bdr)',   accent:'#DC2626' },
+  high:    { badge:'var(--orange)', bg:'var(--orange-bg)', bdr:'var(--orange-bdr)', accent:'#EA580C' },
+  medium:  { badge:'var(--amber)',  bg:'var(--amber-bg)',  bdr:'var(--amber-bdr)',  accent:'#D97706' },
+  low:     { badge:'var(--t5)',     bg:'var(--t0)',        bdr:'var(--t1)',         accent:'#059669' }
+};
+const SEV_LABELS = { critical:'Critique', high:'Haute', medium:'Moyenne', low:'Faible' };
+
+function openRadarPanel(idx) {
+  const issue = RADAR_ISSUES[idx];
+  if(!issue) return;
+  currentRadarIssue = issue;
+  const sc = SEV_COLORS[issue.severity] || SEV_COLORS.medium;
+  const dept = detectDepartment(issue);
+  const prio = calcPriority(issue);
+
+  // Accent bar color
+  document.getElementById('rpAccentBar').style.background = sc.accent;
+
+  // Header
+  document.getElementById('rpTitle').textContent = issue.title;
+  const sevBdg = document.getElementById('rpSevBadge');
+  sevBdg.textContent = SEV_LABELS[issue.severity] || issue.severity;
+  sevBdg.style.cssText = `display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:5px;font-size:10.5px;font-weight:700;background:${sc.bg};color:${sc.badge};border:1px solid ${sc.bdr}`;
+  document.getElementById('rpScore').textContent = issue.score;
+  document.getElementById('rpScore').style.color = sc.badge;
+  document.getElementById('rpMentions').textContent = `${issue.mentions} mentions · ${issue.period}`;
+  // Dept chip
+  const dc = document.getElementById('rpDeptChip');
+  dc.textContent = dept.icon + ' ' + dept.dept;
+  dc.style.cssText = `display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:6px;font-size:11.5px;font-weight:700;background:${dept.bg};color:${dept.color};border:1px solid ${dept.bdr}`;
+
+  // AI section
+  document.getElementById('rpAiInsight').textContent = issue.aiInsight;
+  document.getElementById('rpAiReco').textContent = issue.aiReco;
+  document.getElementById('rpImpact').textContent = issue.impact;
+  document.getElementById('rpDeadline').textContent = issue.deadline;
+
+  // Sources
+  const srcEl = document.getElementById('rpSources');
+  srcEl.innerHTML = issue.sources.map(s=>`
+    <div class="rp-src-item">
+      <div class="rp-src-ico" style="background:var(--p0);border:1px solid var(--bdr)">${s.icon}</div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <span style="font-size:12px;font-weight:600;color:var(--tx9)">${s.label}</span>
+          <span style="font-size:10.5px;color:var(--tx4)">${s.time}</span>
+        </div>
+        <p style="font-size:11.5px;color:var(--tx6);font-style:italic;line-height:1.55">"${s.quote}"</p>
+        <span style="display:inline-block;margin-top:5px;font-size:10px;padding:1px 7px;background:#F1F5F9;border-radius:3px;color:var(--tx4)">${s.tag}</span>
+      </div>
+    </div>`).join('');
+
+  // Freq bars
+  const max = Math.max(...issue.freqData, 1);
+  const days = ['L','M','M','J','V','S','A'];
+  const barsEl = document.getElementById('rpFreqBars');
+  barsEl.innerHTML = issue.freqData.map((v,i)=>`
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1">
+      <div style="font-size:9px;color:${v>0?sc.badge:'var(--tx3)'};font-weight:700">${v||''}</div>
+      <div style="width:100%;height:48px;display:flex;align-items:flex-end">
+        <div style="width:100%;border-radius:3px 3px 0 0;background:${i===6?sc.accent:v>0?sc.accent+'55':'var(--bdr)'};height:${Math.max((v/max)*100,4)}%"></div>
+      </div>
+      <div style="font-size:9px;color:var(--tx4)">${days[i]}</div>
+    </div>`).join('');
+
+  // History
+  const dotColors = { rose:'var(--rose)', amber:'var(--amber)', green:'var(--t5)', gray:'var(--tx3)' };
+  const histEl = document.getElementById('rpHistory');
+  histEl.innerHTML = issue.history.map((h,i)=>`
+    <div class="rp-hist-item">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:0">
+        <div class="rp-dot" style="background:${dotColors[h.dot]||'var(--tx3)'}"></div>
+        ${i<issue.history.length-1?`<div class="rp-line" style="min-height:22px;margin-top:2px"></div>`:''}
+      </div>
+      <div style="padding-bottom:${i<issue.history.length-1?'12':'0'}px">
+        <div style="font-size:12px;color:var(--tx9);font-weight:500">${h.text}</div>
+        <div style="font-size:10.5px;color:var(--tx4);margin-top:2px">${h.date}</div>
+      </div>
+    </div>`).join('');
+
+  // Open
+  document.getElementById('radarOverlay').classList.add('open');
+  document.getElementById('radarPanel').classList.add('open');
+}
+
+function closeRadarPanel() {
+  document.getElementById('radarOverlay').classList.remove('open');
+  document.getElementById('radarPanel').classList.remove('open');
+}
+
+// ── TASK CREATION MODAL ──────────────────────────────────────────
+function openCreateTaskModal() {
+  if(!currentRadarIssue) return;
+  const issue = currentRadarIssue;
+  const dept  = detectDepartment(issue);
+  const prio  = calcPriority(issue);
+  const co    = getCoAssignment(issue, dept);
+  const tid   = nextTaskId();
+
+  // Zone 1 — pre-filled fields
+  document.getElementById('mtTitle').value = issue.title;
+  document.getElementById('mtLocation').value = issue.location + ' · ' + issue.floor;
+  document.getElementById('mtDeadline').value = issue.deadline;
+
+  // Dept selector
+  const deptSel = document.getElementById('mtDeptSelect');
+  deptSel.innerHTML = DEPT_RULES.map(r=>`<option value="${r.dept}" ${r.dept===dept.dept?'selected':''}>${r.icon} ${r.dept}</option>`).join('');
+
+  // Priority buttons
+  document.querySelectorAll('.prio-btn').forEach(b=>{
+    b.classList.toggle('sel', b.dataset.p === prio.level);
+  });
+
+  // Zone 2 — AI summary
+  document.getElementById('mtAiScore').textContent = issue.score + '/100';
+  document.getElementById('mtAiMentions').textContent = issue.mentions + ' avis (' + issue.period + ')';
+  document.getElementById('mtAiInsight').textContent = issue.aiInsight;
+  document.getElementById('mtAiImpact').textContent = issue.impact;
+  document.getElementById('mtTaskId').textContent = '#' + tid;
+  document.getElementById('mtAiReco').textContent = issue.aiReco;
+
+  // Co-assignment notice
+  const coEl = document.getElementById('mtCoAssign');
+  if (co) {
+    coEl.style.display = 'flex';
+    document.getElementById('mtCoName').textContent = co;
+  } else {
+    coEl.style.display = 'none';
+  }
+
+  // Store for confirm
+  document.getElementById('mtConfirmBtn').dataset.tid = tid;
+  document.getElementById('mtConfirmBtn').dataset.dept = dept.dept;
+  document.getElementById('mtConfirmBtn').dataset.prio = prio.level;
+  document.getElementById('mtConfirmBtn').dataset.prioLabel = prio.label;
+
+  // Open modal
+  document.getElementById('modalCreateTask').classList.add('open');
+}
+
+function selectPrio(btn) {
+  document.querySelectorAll('.prio-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+
+function confirmTask() {
+  const btn = document.getElementById('mtConfirmBtn');
+  const tid = btn.dataset.tid;
+  const dept = document.getElementById('mtDeptSelect').value;
+  const prioBtn = document.querySelector('.prio-btn.sel');
+  const prioLabel = prioBtn ? prioBtn.textContent.trim() : '—';
+  const title = document.getElementById('mtTitle').value;
+
+  // Build task object (console log for integration)
+  const task = {
+    id: tid,
+    title,
+    description: currentRadarIssue?.aiInsight,
+    priority: prioBtn?.dataset.p,
+    priorityLabel: prioLabel,
+    department: dept,
+    location: document.getElementById('mtLocation').value,
+    deadline: document.getElementById('mtDeadline').value,
+    source: 'Radar IA',
+    score: currentRadarIssue?.score,
+    mentions: currentRadarIssue?.mentions,
+    status: 'open',
+    createdAt: new Date().toLocaleString('fr-FR')
+  };
+  console.log('[FlowTYM] Tâche créée :', JSON.stringify(task, null, 2));
+
+  // Close modal & panel
+  document.getElementById('modalCreateTask').classList.remove('open');
+  closeRadarPanel();
+
+  // Toast
+  showToast(`Tâche #${tid} créée · ${dept} notifié ✓`);
+}
+</script>
+<!-- ═══════════════════════════════════════════════════════════
+  RADAR IA — SIDE PANEL
+═══════════════════════════════════════════════════════════ -->
+<div class="radar-overlay" id="radarOverlay" onclick="closeRadarPanel()"></div>
+<div class="radar-panel" id="radarPanel">
+
+  <!-- Accent bar -->
+  <div id="rpAccentBar" style="height:3px;width:100%;flex-shrink:0"></div>
+
+  <!-- Header -->
+  <div class="sp-hdr" style="padding:16px 20px;gap:12px;flex-wrap:wrap">
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+        <span id="rpSevBadge">—</span>
+        <span style="font-size:11px;font-weight:700;color:var(--tx9)">Score risque : <span id="rpScore" style="font-size:14px;letter-spacing:-.03em">—</span></span>
+      </div>
+      <h2 style="font-size:14px;font-weight:700;color:var(--tx9);letter-spacing:-.02em;line-height:1.3" id="rpTitle">—</h2>
+      <div style="margin-top:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span id="rpDeptChip">—</span>
+        <span style="font-size:10.5px;color:var(--tx4)" id="rpMentions"></span>
+      </div>
+    </div>
+    <button onclick="closeRadarPanel()" style="width:28px;height:28px;border-radius:7px;border:1px solid var(--bdr);background:transparent;color:var(--tx4);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:all .15s" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'">✕</button>
+  </div>
+
+  <!-- Tabs -->
+  <div style="display:flex;border-bottom:1px solid var(--bdr);padding:0 20px;flex-shrink:0">
+    <button onclick="rpTab('analyse',this)" id="rpTab-analyse" class="btn btn-ghost btn-sm" style="border:none;border-bottom:2px solid var(--p5);border-radius:0;color:var(--p6);padding:8px 12px;font-size:12px">Analyse IA</button>
+    <button onclick="rpTab('sources',this)" id="rpTab-sources" class="btn btn-ghost btn-sm" style="border:none;border-bottom:2px solid transparent;border-radius:0;color:var(--tx4);padding:8px 12px;font-size:12px">Sources</button>
+    <button onclick="rpTab('frequence',this)" id="rpTab-frequence" class="btn btn-ghost btn-sm" style="border:none;border-bottom:2px solid transparent;border-radius:0;color:var(--tx4);padding:8px 12px;font-size:12px">Fréquence</button>
+    <button onclick="rpTab('historique',this)" id="rpTab-historique" class="btn btn-ghost btn-sm" style="border:none;border-bottom:2px solid transparent;border-radius:0;color:var(--tx4);padding:8px 12px;font-size:12px">Historique</button>
+  </div>
+
+  <!-- Body -->
+  <div class="sp-body" style="padding:18px 20px;display:flex;flex-direction:column;gap:14px">
+
+    <!-- ANALYSE TAB -->
+    <div id="rpContent-analyse">
+      <div class="rp-ai-box" style="margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
+          <span style="font-size:16px">🤖</span>
+          <span style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--p7)">Analyse IA</span>
+        </div>
+        <p id="rpAiInsight" style="font-size:12px;color:var(--tx6);line-height:1.65;margin-bottom:10px">—</p>
+        <div style="border-top:1px solid var(--p1);padding-top:10px;margin-top:6px">
+          <p style="font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--p7);margin-bottom:5px">Recommandation</p>
+          <p id="rpAiReco" style="font-size:12px;color:var(--tx6);line-height:1.6">—</p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:#fff;border:1px solid var(--bdr);border-radius:10px;padding:12px 14px">
+          <p style="font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tx4);margin-bottom:4px">Impact estimé</p>
+          <p id="rpImpact" style="font-size:12px;font-weight:600;color:var(--rose)">—</p>
+        </div>
+        <div style="background:#fff;border:1px solid var(--bdr);border-radius:10px;padding:12px 14px">
+          <p style="font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tx4);margin-bottom:4px">Délai suggéré</p>
+          <p id="rpDeadline" style="font-size:12px;font-weight:600;color:var(--amber)">—</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOURCES TAB -->
+    <div id="rpContent-sources" style="display:none;flex-direction:column;gap:10px">
+      <div id="rpSources" style="display:flex;flex-direction:column;gap:9px"></div>
+    </div>
+
+    <!-- FREQUENCE TAB -->
+    <div id="rpContent-frequence" style="display:none">
+      <p style="font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tx4);margin-bottom:10px">Occurrences — 7 derniers jours</p>
+      <div id="rpFreqBars" style="display:flex;align-items:flex-end;gap:4px;height:80px;padding:0 4px"></div>
+      <div style="border-top:1px solid var(--bdr);margin-top:14px;padding-top:12px">
+        <p style="font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tx4);margin-bottom:4px">Période</p>
+        <p style="font-size:12px;color:var(--tx6)" id="rpPeriodLabel">—</p>
+      </div>
+    </div>
+
+    <!-- HISTORIQUE TAB -->
+    <div id="rpContent-historique" style="display:none;flex-direction:column;gap:0" id="rpHistory">
+      <div id="rpHistory" style="display:flex;flex-direction:column;gap:0"></div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="sp-ftr" style="display:flex;gap:8px">
+    <button onclick="openCreateTaskModal()" class="btn btn-p" style="flex:1;justify-content:center;gap:7px">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Créer une tâche
+    </button>
+    <button onclick="closeRadarPanel()" class="btn btn-ghost" style="padding:7px 14px">Ignorer</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+  TASK CREATION MODAL
+═══════════════════════════════════════════════════════════ -->
+<div class="modal-bg" id="modalCreateTask" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal-task">
+
+    <!-- Modal header -->
+    <div style="padding:20px 24px 0;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+          <span style="font-size:15px;font-weight:800;letter-spacing:-.03em;color:var(--tx9)">Créer une tâche</span>
+          <span class="mt-task-id" id="mtTaskId">—</span>
+        </div>
+        <p style="font-size:11.5px;color:var(--tx4)">Générée automatiquement depuis le Radar IA · modifiable</p>
+      </div>
+      <button onclick="document.getElementById('modalCreateTask').classList.remove('open')" style="width:28px;height:28px;border-radius:7px;border:1px solid var(--bdr);background:transparent;color:var(--tx4);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px">✕</button>
+    </div>
+
+    <!-- ZONE 1 — Pré-rempli / modifiable -->
+    <div class="mt-zone1" style="padding-top:16px">
+      <div class="mt-field">
+        <div class="mt-label">Titre de la tâche</div>
+        <input id="mtTitle" class="inp" type="text" style="font-size:13px;font-weight:600">
+      </div>
+      <div class="mt-grid">
+        <div class="mt-field">
+          <div class="mt-label">Département</div>
+          <select id="mtDeptSelect" class="inp" style="font-size:12.5px"></select>
+        </div>
+        <div class="mt-field">
+          <div class="mt-label">Localisation</div>
+          <input id="mtLocation" class="inp" type="text" style="font-size:12.5px">
+        </div>
+      </div>
+      <div class="mt-field">
+        <div class="mt-label">Priorité</div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="prio-btn" data-p="critical" onclick="selectPrio(this)">🔴 Critique</button>
+          <button class="prio-btn" data-p="high"     onclick="selectPrio(this)">🟠 Haute</button>
+          <button class="prio-btn" data-p="medium"   onclick="selectPrio(this)">🟡 Moyenne</button>
+          <button class="prio-btn" data-p="low"      onclick="selectPrio(this)">🟢 Faible</button>
+        </div>
+      </div>
+      <div class="mt-field" style="margin-bottom:0">
+        <div class="mt-label">Délai suggéré</div>
+        <input id="mtDeadline" class="inp" type="text" style="font-size:12.5px">
+      </div>
+    </div>
+
+    <!-- ZONE 2 — Résumé IA (lecture seule) -->
+    <div class="mt-zone2">
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
+        <span style="font-size:15px">🤖</span>
+        <span style="font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--p7)">Résumé IA — lecture seule</span>
+      </div>
+      <div class="mt-ai-row"><span class="mt-ai-key">Score risque</span><span id="mtAiScore" style="font-weight:700;color:var(--rose)">—</span></div>
+      <div class="mt-ai-row"><span class="mt-ai-key">Sources</span><span id="mtAiMentions" style="color:var(--tx6)">—</span></div>
+      <div class="mt-ai-row"><span class="mt-ai-key">Impact estimé</span><span id="mtAiImpact" style="color:var(--rose)">—</span></div>
+      <div class="mt-ai-row" style="align-items:flex-start"><span class="mt-ai-key">Recommandation</span><span id="mtAiReco" style="color:var(--tx6);flex:1">—</span></div>
+      <!-- Co-assignment notice -->
+      <div id="mtCoAssign" style="display:none;align-items:center;gap:8px;margin-top:10px;padding:8px 12px;background:#FEF3C7;border-radius:8px;border:1px solid var(--amber-bdr)">
+        <span style="font-size:13px">⚡</span>
+        <span style="font-size:11.5px;color:var(--amber)">Notification FYI également envoyée à <strong id="mtCoName"></strong></span>
+      </div>
+    </div>
+
+    <!-- ZONE 3 — Actions -->
+    <div class="mt-zone3">
+      <button onclick="document.getElementById('modalCreateTask').classList.remove('open')" class="btn btn-ghost">Annuler</button>
+      <button id="mtConfirmBtn" onclick="confirmTask()" class="btn btn-p" style="gap:7px;padding:8px 20px">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Créer la tâche
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── RADAR PANEL TAB SWITCHER ──────────────────────────────────────
+function rpTab(name, btn) {
+  ['analyse','sources','frequence','historique'].forEach(t=>{
+    const c = document.getElementById('rpContent-'+t);
+    const b = document.getElementById('rpTab-'+t);
+    if(!c||!b) return;
+    const isAct = t===name;
+    c.style.display = isAct ? (t==='sources'||t==='historique'?'flex':'block') : 'none';
+    b.style.borderBottomColor = isAct ? 'var(--p5)' : 'transparent';
+    b.style.color = isAct ? 'var(--p6)' : 'var(--tx4)';
+  });
+  if(name==='frequence' && currentRadarIssue)
+    const rpl=document.getElementById('rpPeriodLabel'); if(rpl) rpl.textContent = currentRadarIssue.period;
+}
+// ══════════════════════════════════════════════════════════════════
+// FLOWTYM E-RÉPUTATION — COMPLETE INTERACTION LAYER v2
+// ══════════════════════════════════════════════════════════════════
+
+// ── OPERATION LINK ────────────────────────────────────────────────
+function openOperation() {
+  showToast('Ouverture de Flowtym Operation…');
+  setTimeout(()=>{
+    // In prod: window.location.href = '/operation' or open in new tab
+    showToast('💡 Flowtym Operation · Grand Hôtel — Housekeeping & Maintenance');
+  }, 800);
+}
+
+// ── LOADING STATES ────────────────────────────────────────────────
+function btnLoad(btn, txt) {
+  btn._orig = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = `<svg class="spin" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> ${txt}`;
+}
+function btnDone(btn, txt) {
+  btn.disabled = false;
+  btn.innerHTML = `<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> ${txt || btn._orig || 'Fait'}`;
+  setTimeout(()=>{ btn.innerHTML = btn._orig; }, 1600);
+}
+
+// ── SYNC BUTTON ───────────────────────────────────────────────────
+function syncNow(btn) {
+  btnLoad(btn, 'Synchro…');
+  const syncData = [
+    ()=>{ /* simulate incremental progress */ },
+  ];
+  setTimeout(()=>{
+    btnDone(btn, 'Synchronisé ✓');
+    showToast('Synchronisation complète — 7 nouvelles données OTA');
+    document.getElementById('syncBadge').style.display='block';
+    document.getElementById('syncBadge').textContent='Synchronisé · maintenant';
+    setTimeout(()=>document.getElementById('syncBadge').style.display='none', 4000);
+  }, 1800);
+}
+
+// ── INBOX FILTERING ───────────────────────────────────────────────
+function filterInbox() {
+  const q     = (document.getElementById('inboxSearch')?.value||'').toLowerCase();
+  const plt   = (document.getElementById('inboxFilterPlatform')?.value||'');
+  const stat  = (document.getElementById('inboxFilterStatus')?.value||'');
+  const rat   = (document.getElementById('inboxFilterRating')?.value||'');
+
+  const filtered = reviews.filter(r => {
+    if(q && !r.platform.toLowerCase().includes(q) && !r.author.toLowerCase().includes(q) && !r.comment.toLowerCase().includes(q) && !r.hotel.toLowerCase().includes(q)) return false;
+    if(plt && plt !== 'Toutes plateformes' && r.platform !== plt) return false;
+    if(stat && stat !== 'Tous statuts') {
+      if(stat === 'À répondre' && r.status !== 'new') return false;
+      if(stat === 'Répondu'    && r.status !== 'responded') return false;
+      if(stat === 'Suspect'    && r.trust < 60) return false;
+    }
+    if(rat && rat !== 'Toutes notes') {
+      const stars = parseInt(rat);
+      if(Math.floor(r.rating) !== stars) return false;
+    }
+    return true;
+  });
+
+  const tbody = document.getElementById('inboxTable');
+  const platformColors = {Google:{bg:'#DBEAFE',color:'#2563EB'},Booking:{bg:'#E3F2FD',color:'#1565C0'},Tripadvisor:{bg:'#D1FAE5',color:'#065F46'},Expedia:{bg:'#FEF3C7',color:'#92400E'},Airbnb:{bg:'#FFE4E6',color:'#9F1239'},Agoda:{bg:'#F3E5F5',color:'#6A1B9A'}};
+  if(filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--tx4);font-size:13px">Aucun avis ne correspond à vos filtres</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filtered.map(r=>{
+    const pc = platformColors[r.platform]||{bg:'#F5F4FE',color:'#5248C9'};
+    const ts = r.trust<30?`<span class="rscore rs-low">${r.trust}</span>`:r.trust<60?`<span class="rscore rs-med">${r.trust}</span>`:`<span class="rscore rs-hi">${r.trust}</span>`;
+    const st = r.status==='responded'?`<span class="bdg bdg-g">Répondu</span>`:`<span class="bdg bdg-r">À répondre</span>`;
+    const rc = r.rating>=4?'var(--t5)':r.rating>=3?'var(--amber)':'var(--rose)';
+    return `<tr>
+      <td><div style="display:flex;align-items:center;gap:7px"><span style="width:24px;height:24px;border-radius:6px;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;background:${pc.bg}">${getPlatformLogo(r.platform.toLowerCase(),24)}</span><span style="font-weight:500">${r.platform}</span></div></td>
+      <td><span style="font-weight:700;color:${rc}">${r.rating.toFixed(1)}★</span></td>
+      <td style="color:var(--tx6)">${r.author}</td>
+      <td style="max-width:200px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:11.5px;color:var(--tx4)">${r.comment}</td>
+      <td>${ts}</td>
+      <td>${st}</td>
+      <td style="font-size:11px;color:var(--tx4)">${r.date}</td>
+      <td><button class="btn btn-p btn-xs" onclick="openReview('${r.platform}','${r.hotel}','${r.rating}',\`${r.comment}\`,'${r.date}')">Répondre</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// Override renderInbox to use filterInbox
+
+// ── NAVIGATE TO INBOX WITH PLATFORM PRE-FILTERED ─────────────────
+function navToInboxFiltered(platform) {
+  nav('inbox');
+  setTimeout(()=>{
+    const sel = document.getElementById('inboxFilterPlatform');
+    if(sel) { sel.value = platform; filterInbox(); }
+  }, 80);
+}
+
+// ── DASHBOARD PERIOD CYCLE ────────────────────────────────────────
+const DASH_PERIODS = ['7 derniers jours','30 derniers jours','12 derniers mois'];
+let dashPeriodIdx = 2;
+function cycleDashPeriod(btn) {
+  dashPeriodIdx = (dashPeriodIdx + 1) % DASH_PERIODS.length;
+  const label = document.getElementById('dashPeriodLabel');
+  if(label) label.textContent = DASH_PERIODS[dashPeriodIdx];
+  else console.warn('dashPeriodLabel not found');
+  // Update line chart with period-appropriate data
+  const periodData = {
+    0: { // 7 days
+      labels:['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'],
+      g:[4.5,4.6,4.4,4.5,4.6,4.7,4.6], b:[4.3,4.4,4.3,4.4,4.3,4.5,4.4],
+      t:[4.2,4.3,4.1,4.3,4.2,4.4,4.3], a:[4.0,4.1,4.0,4.1,4.2,4.3,4.1]
+    },
+    1: { // 30 days
+      labels:['S1','S2','S3','S4'],
+      g:[4.3,4.4,4.5,4.6], b:[4.1,4.2,4.3,4.4], t:[4.0,4.2,4.2,4.3], a:[3.9,4.0,4.1,4.1]
+    },
+    2: { // 12 months
+      labels:['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'],
+      g:[4.1,4.0,4.2,4.3,4.4,4.3,4.5,4.4,4.3,4.4,4.5,4.6],
+      b:[4.0,3.9,4.0,4.1,4.2,4.2,4.1,4.3,4.2,4.3,4.2,4.4],
+      t:[4.3,4.2,4.1,4.2,4.3,4.1,4.0,4.2,4.3,4.4,4.3,4.3],
+      a:[3.9,4.0,4.0,4.1,4.2,4.1,4.0,4.1,4.0,4.2,4.1,4.1]
+    }
+  };
+  const d = periodData[dashPeriodIdx];
+  const chart = Chart.getChart('lineChart');
+  if(chart) {
+    chart.data.labels = d.labels;
+    chart.data.datasets[0].data = d.g;
+    chart.data.datasets[1].data = d.b;
+    chart.data.datasets[2].data = d.t;
+    chart.data.datasets[3].data = d.a;
+    chart.update('active');
+  }
+  showToast(`Graphique mis à jour — ${DASH_PERIODS[dashPeriodIdx]}`);
+}
+
+// ── STATS PERIOD UPDATE ────────────────────────────────────────────
+function updateStatsPeriod(period) {
+  // Update volume chart
+  const vc = Chart.getChart('volChart');
+  if(vc) {
+    const d = period==='7j'
+      ? {labels:['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'],data:[12,18,9,22,15,28,20]}
+      : period==='30j'
+      ? {labels:['S1','S2','S3','S4'],data:[78,92,105,109]}
+      : {labels:['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'],data:[78,92,105,88,112,98,134,156,118,124,139,140]};
+    vc.data.labels = d.labels;
+    vc.data.datasets[0].data = d.data;
+    vc.update('active');
+  }
+  showToast(`Statistiques mises à jour — ${period}`);
+}
+
+// ── EXPORT CSV ────────────────────────────────────────────────────
+function exportCSV() {
+  const rows = [
+    ['Plateforme','Note','Auteur','Commentaire','Trust Score','Statut','Date'],
+    ...reviews.map(r=>[r.platform, r.rating, r.author, '"'+r.comment.replace(/"/g,'""')+'"', r.trust, r.status==='responded'?'Répondu':'À répondre', r.date])
+  ];
+  const csv = rows.map(r=>r.join(';')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'grand-hotel-avis-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  showToast('Export CSV téléchargé ✓');
+}
+
+// ── EXPORT STATS REPORT ───────────────────────────────────────────
+function exportReport() {
+  const content = `RAPPORT E-RÉPUTATION — GRAND HÔTEL
+Généré le : ${new Date().toLocaleDateString('fr-FR', {year:'numeric',month:'long',day:'numeric'})}
+══════════════════════════════════════════
+
+PERFORMANCES GLOBALES
+─────────────────────
+• Note globale        : 4,3 / 5  (↑ +0,2 vs mois dernier)
+• Total avis          : 1 284     (+18% vs N-1)
+• Taux de réponse     : 92%       (Excellent)
+• Délai moyen réponse : 2h        (−35 min vs marché)
+
+NOTES PAR PLATEFORME
+────────────────────
+• Google              : 4,6 ★  (668 avis)
+• Booking.com         : 4,4 ★  (398 avis)
+• Tripadvisor         : 4,3 ★  (218 avis)
+• Expedia             : 4,2 ★  (145 avis)
+• Airbnb              : 4,1 ★  (89 avis)
+• Agoda               : 4,5 ★  (72 avis)
+
+MOTS-CLÉS RÉCURRENTS
+────────────────────
+Points forts  : Accueil, Propreté, Vue, Personnel
+Points faibles: Wifi, Bruit, Check-in
+
+ALERTES RADAR IA (5 ACTIVES)
+─────────────────────────────
+[CRITIQUE] Propreté Ch.205        — 7 mentions, −0,2 point Google
+[HAUTE]    Bruit nocturne Ch.301  — 5 mentions, étage rue
+[HAUTE]    Wifi instable Étage 3  — 4 mentions, pic 20h–23h
+[MOYENNE]  SDB défectueuse Ch.112 — 3 mentions, plomberie
+[FAIBLE]   Buffet PDJ             — 2 mentions, variété
+
+INTÉGRITÉ DES AVIS
+──────────────────
+• Avis analysés : 1 284
+• Suspects      : 48   (3,7% — seuil haut)
+• Signalés      : 12
+• Confirmés OK  : 1 224
+
+ACTIONS RECOMMANDÉES
+────────────────────
+1. Répondre aux 7 avis en attente → +0,15 pt Booking
+2. Inviter 12 clients satisfaits  → +8% volume Google
+3. Résoudre Wifi Étage 3          → impact note globale
+4. Traiter 3 avis suspects Airbnb → Trust Score > 70
+
+══════════════════════════════════════════
+Rapport généré par FlowTYM E-Réputation
+`;
+  const blob = new Blob([content], {type:'text/plain;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'rapport-e-reputation-'+new Date().toISOString().slice(0,10)+'.txt';
+  a.click();
+  showToast('Rapport téléchargé ✓');
+}
+
+// ── INTEGRITY REPORT ──────────────────────────────────────────────
+function intGenReport() {
+  const content = `RAPPORT INTÉGRITÉ DES AVIS — GRAND HÔTEL
+Généré le : ${new Date().toLocaleDateString('fr-FR', {year:'numeric',month:'long',day:'numeric'})}
+════════════════════════════════════════
+
+RÉSUMÉ
+──────
+Avis analysés : 1 284
+Suspects      : 48 (3,7%)
+Signalés plat.: 12
+Supprimés     : 5
+Score fiabilité: 96,3%
+
+AVIS SUSPECTS DÉTECTÉS
+───────────────────────
+${intReviews.filter(r=>r.status==='suspect').map(r=>`
+[${r.platform}] ${r.author} — ${r.rating}★ — Trust: ${r.trust}
+Raisons: ${r.reasons.join(', ')}
+Extrait: "${r.comment.slice(0,80)}..."
+`).join('\n')}
+
+RÈGLES DE DÉTECTION ACTIVES
+────────────────────────────
+• Incohérence note / contenu texte
+• Compte créé récemment (< 30 jours)
+• Séjour absent du PMS
+• Langage diffamatoire ou hors sujet
+• Patterns avis positifs répétés
+
+════════════════════════════════════════
+Rapport généré par FlowTYM Intégrité IA
+`;
+  const blob = new Blob([content], {type:'text/plain;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'rapport-integrite-'+new Date().toISOString().slice(0,10)+'.txt';
+  a.click();
+  showToast('Rapport Intégrité téléchargé ✓');
+  setTimeout(intCloseDrawer, 1200);
+}
+
+// ── INTEGRITY ANALYZE NOW ─────────────────────────────────────────
+function intAnalyzeNow(btn) {
+  btnLoad(btn, 'Analyse IA…');
+  setTimeout(()=>{
+    // Simulate adding a new suspect
+      btnDone(btn, 'Analyse terminée ✓');
+    showToast('Analyse IA terminée — 2 nouveaux avis suspects détectés');
+    const badge = document.querySelector('[onclick="intTriggerAnalysis()"]');
+    if(badge) badge.textContent = '14 avis suspects ce mois';
+    // Re-render table with updated data
+    intRenderTable(intFilteredReviews);
+  }, 2200);
+}
+
+// ── INVITE CLIENT ─────────────────────────────────────────────────
+function inviteClient(btn, name, platform) {
+  btnLoad(btn, 'Envoi…');
+  setTimeout(()=>{
+    btnDone(btn, 'Envoyé ✓');
+    showToast(`Invitation envoyée à ${name} → ${platform} ✓`);
+  }, 1200);
+}
+
+// ── QR CODE GENERATION ────────────────────────────────────────────
+function generateQRCode(btn) {
+  const typeEl = btn.closest('.modal').querySelector('select');
+  const roomEl = btn.closest('.modal').querySelectorAll('input')[0];
+  const type = typeEl ? typeEl.value : 'Chambre';
+  const room = roomEl ? (roomEl.value || '101') : '101';
+  const url = `https://flowtym.io/feedback/${encodeURIComponent(type)}/${encodeURIComponent(room)}?hotel=grand-hotel`;
+
+  const preview = document.getElementById('qrPreviewBox');
+  const canvas  = document.getElementById('qrCanvas');
+  const label   = document.getElementById('qrLabel');
+  canvas.innerHTML = '';
+
+  btnLoad(btn, 'Génération…');
+
+  setTimeout(()=>{
+    if(typeof QRCode !== 'undefined') {
+      new QRCode(canvas, { text: url, width: 140, height: 140, colorDark:'#0D1340', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.H });
+    } else {
+      canvas.innerHTML = `<div style="width:140px;height:140px;background:var(--p0);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--tx4);border:1px solid var(--bdr)">QR · ${type} ${room}</div>`;
+    }
+    label.textContent = `${type} · ${room}  —  ${url}`;
+    preview.style.display = 'block';
+    btnDone(btn, 'Généré ✓');
+    showToast(`QR Code généré pour ${type} ${room} ✓`);
+  }, 900);
+}
+
+// ── RADAR MARK RESOLVED ───────────────────────────────────────────
+function markRadarResolved(idx) {
+  if(RADAR_ISSUES[idx]) {
+    RADAR_ISSUES[idx].status = 'Résolu';
+    showToast(`Problème "${RADAR_ISSUES[idx].title.slice(0,40)}…" marqué résolu ✓`);
+    closeRadarPanel();
+    // Refresh radar table if visible
+    const table = document.getElementById('radarTableBody');
+    if(table) renderRadarTable();
+  }
+}
+
+// ── PLATFORM STATUS UPDATE ────────────────────────────────────────
+// connectPlatform / disconnectPlatform already defined above
+
+// ── KPI CARD DRILL-DOWNS ──────────────────────────────────────────
+// Add click handlers after DOM ready
+document.addEventListener('DOMContentLoaded', ()=>{
+  // Wire KPI cards on dashboard for drill-down
+  document.querySelectorAll('#s-dashboard .card').forEach((card, i) => {
+    if(i < 3) {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => {
+        if(i===0) nav('stats');
+        if(i===1) nav('inbox');
+        if(i===2) nav('booster');
+      });
+    }
+  });
+});
+
+// ── SPIN ANIMATION ────────────────────────────────────────────────
+const spinStyle = document.createElement('style');
+spinStyle.textContent = `
+@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+.spin { animation: spin .8s linear infinite; display:inline-block; vertical-align:middle; }
+`;
+document.head.appendChild(spinStyle);
+
+
+// ═══ MODULE NAVBAR ═══
+const MODULE_ROUTES = {
+  dashboard:   () => nav('dashboard'),
+  pms:         () => showToast('Module PMS — bientôt disponible'),
+  ereputation: () => nav('dashboard'),
+  operations:  () => showToast('Module Opérations — bientôt disponible'),
+  yield:       () => showToast('Yield Management — bientôt disponible'),
+  channel:     () => nav('connections'),
+  reports:     () => nav('stats'),
+  settings:    () => nav('connections'),
+};
+
+function navModule(mod, clickedBtn) {
+  // Update desktop navbar
+  document.querySelectorAll('.mi').forEach(b => b.classList.remove('mact'));
+  document.querySelectorAll(`.mi[data-mod="${mod}"]`).forEach(b => b.classList.add('mact'));
+  // Update drawer
+  document.querySelectorAll('.mdrawer-item').forEach(b => b.classList.remove('mact'));
+  document.querySelectorAll(`.mdrawer-item[data-mod="${mod}"]`).forEach(b => b.classList.add('mact'));
+  // Execute route
+  if (MODULE_ROUTES[mod]) MODULE_ROUTES[mod]();
+}
+
+function toggleDrawer(open) {
+  const d = document.getElementById('mobileDrawer');
+  if (!d) return;
+  if (open) {
+    d.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  } else {
+    d.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+
+// Sync module navbar when nav() is called — no function redeclaration
+function syncModuleNav(screen) {
+  // also clear active on header inline items
+  document.querySelectorAll('#moduleNavInline .mi').forEach(b=>b.classList.remove('mact'));
+  const screenToMod = {
+    dashboard:'ereputation',inbox:'ereputation',integrity:'ereputation',
+    radar:'ereputation',booster:'ereputation',campaigns:'ereputation',
+    stats:'reports',connections:'channel',
+  };
+  const mod = screenToMod[screen] || 'ereputation';
+  document.querySelectorAll('.mi').forEach(b=>b.classList.remove('mact'));
+  document.querySelectorAll('.mi[data-mod="'+mod+'"]').forEach(b=>b.classList.add('mact'));
+  document.querySelectorAll('.mdrawer-item').forEach(b=>b.classList.remove('mact'));
+  document.querySelectorAll('.mdrawer-item[data-mod="'+mod+'"]').forEach(b=>b.classList.add('mact'));
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+{
+  "theme": "Light & Dark Mode Supported",
+  "project_name": "Flowtym Data Hub",
+  "description": "Technical control center of Flowtym hotel management system, providing visibility and management of all external integrations, data synchronization, and API management.",
+  "colors": {
+    "primary": "#7c3aed",
+    "primary_hover": "#6d28d9",
+    "primary_focus": "#8b5cf6",
+    "background_light": "#ffffff",
+    "background_dark": "#0a0a0a",
+    "surface_light": "#f8fafc",
+    "surface_dark": "#1e293b",
+    "text_primary_light": "#0f172a",
+    "text_secondary_light": "#475569",
+    "text_primary_dark": "#f8fafc",
+    "text_secondary_dark": "#94a3b8",
+    "border_light": "#e2e8f0",
+    "border_dark": "#334155",
+    "status": {
+      "connected_success": "#10b981",
+      "error_disconnected": "#ef4444",
+      "syncing_active": "#3b82f6",
+      "disconnected_idle": "#94a3b8",
+      "warning": "#f59e0b"
+    }
+  },
+  "typography": {
+    "font_families": {
+      "headings": "Manrope, sans-serif",
+      "body": "Inter, sans-serif",
+      "mono": "'JetBrains Mono', monospace"
+    },
+    "scales": {
+      "h1": "text-4xl md:text-5xl font-extrabold tracking-tight",
+      "h2": "text-2xl md:text-3xl font-bold tracking-tight",
+      "h3": "text-xl md:text-2xl font-semibold tracking-tight",
+      "body": "text-base leading-relaxed text-slate-700 dark:text-slate-300",
+      "small": "text-sm leading-5 text-slate-500 dark:text-slate-400 uppercase tracking-widest",
+      "code": "text-sm font-mono tracking-tight"
+    },
+    "pairing_strategy": "The 'Soft Utility' (Dashboard/Apps) + The 'Swiss Brutalist' for technical precision. Manrope provides clean, authoritative headings, while Inter offers maximum legibility for dense tables."
+  },
+  "visual_enhancers": {
+    "shadows": {
+      "card_light": "shadow-[0_4px_24px_rgba(0,0,0,0.04)]",
+      "card_dark": "shadow-[0_4px_24px_rgba(0,0,0,0.4)]",
+      "glow_primary": "drop-shadow-[0_0_12px_rgba(124,58,237,0.3)]",
+      "glow_sync": "drop-shadow-[0_0_12px_rgba(59,130,246,0.4)]"
+    },
+    "borders": {
+      "subtle": "1px solid var(--border)",
+      "radius": "rounded-lg md:rounded-xl",
+      "grid_lines": "divide-y divide-border border-border"
+    },
+    "surfaces": {
+      "glass": "bg-white/70 dark:bg-black/60 backdrop-blur-xl backdrop-saturate-150 border border-white/20 dark:border-white/10 shadow-sm",
+      "flat_card": "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800",
+      "terminal": "bg-[#0A0A0A] border border-slate-800 text-[#10b981] font-mono"
+    }
+  },
+  "grids_and_layouts": {
+    "container": "w-full max-w-[1600px] mx-auto p-4 md:p-8 lg:p-12",
+    "bento_dashboard": "grid grid-cols-1 md:grid-cols-4 lg:grid-cols-12 gap-6",
+    "connector_grid": "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8",
+    "data_dense_table": "w-full overflow-x-auto border-collapse",
+    "sidebar_layout": "flex flex-col md:flex-row min-h-screen bg-slate-50 dark:bg-slate-950",
+    "spacing_philosophy": "Use generous padding (p-6, p-8) for macro-containers to let the data breathe, but tight gap (gap-2, gap-4) for micro-metrics and labels."
+  },
+  "components_and_paths": {
+    "charts": {
+      "path": "src/components/ui/chart.jsx",
+      "instruction": "Use Recharts (via Shadcn) for Monitoring Dashboard (line charts for data volume, error rates). Use primary and status colors."
+    },
+    "tables": {
+      "path": "src/components/ui/table.jsx",
+      "instruction": "Use Shadcn Table for Sync History and Unified Data. Apply the 'Grid Borders' micro-theme: subtle borders on right/bottom of cells, hover rows slightly darken."
+    },
+    "cards": {
+      "path": "src/components/ui/card.jsx",
+      "instruction": "Use Shadcn Card for Overview stats and Connectors. Add hover effect: -translate-y-1, border becomes primary color on hover."
+    },
+    "badges": {
+      "path": "src/components/ui/badge.jsx",
+      "instruction": "Use Shadcn Badge for source systems (Mews, Booking.com) and statuses. Make them flat, using text-color + bg-opacity-10."
+    },
+    "tabs": {
+      "path": "src/components/ui/tabs.jsx",
+      "instruction": "Use Shadcn Tabs for navigating Unified Data (Reservations, Guests, Rates). Override height to h-auto."
+    },
+    "toast": {
+      "path": "src/components/ui/sonner.jsx",
+      "instruction": "Use Sonner for all sync completion, API key generation, and error notifications."
+    }
+  },
+  "motion": {
+    "hover_states": "transition-all duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1)]",
+    "syncing_animation": "animate-pulse and a moving linear-gradient border (The 'Tracing Beam' effect) for active syncing connectors.",
+    "page_transitions": "Fade and slight upward translate (opacity-0 translate-y-4 to opacity-100 translate-y-0) staggered by 100ms for list items.",
+    "data_stream": "Smooth scrolling for the real-time event stream in the Monitoring view."
+  },
+  "accessibility": {
+    "contrast": "Ensure all text against the primary violet (#7c3aed) is pure white (#ffffff) for >4.5:1 contrast. Use darker shades (#0f172a) for body text in light mode.",
+    "focus_states": "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background",
+    "aria": "Use aria-live='polite' for the real-time sync status updates and terminal logs.",
+    "testing": "All interactive elements MUST have data-testid attributes (e.g., data-testid='connector-sync-button')."
+  },
+  "media_and_icons": {
+    "icon_library": "@phosphor-icons/react",
+    "icon_usage": "Use Phosphor Icons (Duotone or Regular weight) for all connector types, navigation, and actions. They provide a crisp, technical look perfect for dashboards.",
+    "image_urls": [
+      {
+        "url": "https://images.unsplash.com/photo-1626141138092-a20c8debe88b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzR8MHwxfHNlYXJjaHwyfHxhYnN0cmFjdCUyMHB1cnBsZSUyMGdlb21ldHJpY3xlbnwwfHx8fDE3NzQ0MzgyNjR8MA&ixlib=rb-4.1.0&q=85",
+        "category": "background",
+        "description": "Abstract purple geometric pattern. Use as a very low-opacity background or hero image for the empty state of the API / Marketplace page."
+      }
+    ]
+  },
+  "3d_libraries_and_steps": {
+    "library": "Recharts (2D) for main data, optionally react-fast-marquee for a subtle data-flow ticker in the footer/header.",
+    "steps": [
+      "1. Install @phosphor-icons/react for the dashboard iconography.",
+      "2. Setup Shadcn UI components: table, card, badge, tabs, dialog, input, button, sonner.",
+      "3. Configure Tailwind theme colors to match Flowtym's Violet and Status colors.",
+      "4. Implement the High Density Grid for Monitoring and Tables.",
+      "5. Create the 'Terminal' block for real-time logs using JetBrains Mono."
+    ]
+  },
+  "instructions_to_main_agent": [
+    "1. Start by building the top-level layout that integrates with the existing Flowtym TopNavigation.",
+    "2. Implement the '/datahub' dashboard overview with Bento Grid layout for KPIs (Total Syncs, Error Rate, Active Connectors).",
+    "3. Build the '/datahub/connectors' view using a grid of Neumorphic or Flat cards. Implement the 'Tracing Beam' or a pulsing border for any connector currently syncing.",
+    "4. Construct the '/datahub/sync' and '/datahub/data/*' views using Shadcn Tables. Ensure columns for Source System use custom colored Badges.",
+    "5. Build the '/datahub/api' page emphasizing security. Use JetBrains Mono for displaying API keys, with 'click to copy' functionality.",
+    "6. Build the '/datahub/monitoring' view. This must include Recharts for volume metrics and a black 'Terminal' styled div for real-time event logs.",
+    "7. All buttons and interactive elements MUST have a distinct hover state and an active focus ring.",
+    "8. Use Phosphor Icons for technical clarity. e.g., <Plugs/>, <Database/>, <ChartLineUp/>.",
+    "9. Add data-testid to ALL interactive elements (buttons, inputs, tabs, table rows) for testing."
+  ],
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "You tend to converge toward generic, 'on distribution' outputs. In frontend design, this creates what users call the 'AI slop' aesthetic. Avoid this: make creative, distinctive frontends that surprise and delight.",
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur).",
+    "You MUST NOT apply universal transition. Eg: 'transition: all'. This results in breaking transforms. Always add transitions for specific interactive elements like button, input excluding transforms.",
+    "You MUST NOT center align the app container, ie do not add '.App { text-align: center; }' in the css file. This disrupts the human natural reading flow of text.",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations & color relevant to the app style.",
+    "NEVER: use AI assistant Emoji characters like 🤖🧠💭💡🔮🎯📚🎭🎬🎪🎉🎊🎁🎀🎂🍰🎈🎨🎰💰💵💳🏦💎🪙💸🤑📊📈📉💹🔢🏆🥇 etc for icons.",
+    "Every interaction needs micro-animations - hover states, transitions, parallax effects, and entrance animations. Static = dead.",
+    "Use 2-3x more spacing than feels comfortable. Cramped designs look cheap.",
+    "Subtle grain textures, noise overlays, custom cursors, selection states, and loading animations: separates good from extraordinary.",
+    "Main agent relies on these image URLs. Missing categories (especially sponsor logos) = main agent will use placeholder text which is FORBIDDEN.",
+    "Prioritize using pre-existing components from src/components/ui when applicable.",
+    "Create new components that match the style and conventions of existing components when needed.",
+    "Components MUST use named exports (export const ComponentName = ...)",
+    "Pages MUST use default exports (export default function PageName() {...})",
+    "Use 'sonner' for toasts. Sonner component are located in /app/src/components/ui/sonner.tsx"
+  ],
+  "GENERAL UI UX DESIGN GUIDELINES": [
+    "Prioritize Data Density: For technical users, scrolling is better than clicking. Show more data per page using dense tables rather than hiding it behind pagination.",
+    "Clear Feedback Loops: Every manual sync, configuration change, or API key generation must trigger a clear success/error toast (via Sonner).",
+    "Language Context: The user language is French. All placeholder text, labels, and table headers should reflect this ('Connecteurs', 'Synchronisation', 'Données Unifiées').",
+    "Status Visibility: Use color intentionally. Only use Red for actual errors, Green for successful connections, Blue for active syncing, and Gray/Neutral for disconnected. Never use these colors for decorative elements.",
+    "Avoid the 'Vercel Look': Make the dashboard distinct by using the Flowtym Violet (#7c3aed) subtly in borders, faint glows, and selection states."
+  ]
+}

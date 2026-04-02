@@ -1,0 +1,306 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* FLOWTYM PREMIUM DESIGN SYSTEM V2 - Kleon Figma */
+@import './styles/flowtym-premium-v2.css';
+@import './styles/flowtym-tokens.css';
+@import './styles/flowtym-overrides.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Flowtym Design System Colors */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 262 83% 58%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 262 83% 58%;
+    --radius: 0.5rem;
+    
+    /* Staff Planning Status Colors */
+    --status-matin: 34 100% 50%;
+    --status-soir: 217 91% 60%;
+    --status-nuit: 263 70% 50%;
+    --status-repos: 215 20% 65%;
+    --status-conge: 142 76% 36%;
+    --status-maladie: 0 84% 60%;
+    --status-ferie: 280 87% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-semibold tracking-tight text-slate-900;
+  }
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
+}
+
+/* ===================== FLOWTYM PREMIUM DESIGN SYSTEM ===================== */
+
+/* KPI Cards Premium */
+.kpi-card {
+  @apply bg-white rounded-xl p-5 transition-all;
+  border: 1px solid #F3F4F6;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+.kpi-card:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+}
+.kpi-value {
+  @apply text-3xl font-bold tracking-tight;
+  color: #1F2937;
+}
+.kpi-label {
+  @apply text-xs font-medium uppercase tracking-wider mt-1;
+  color: #6B7280;
+}
+
+/* Contract Type Badges */
+.badge-cdi { @apply bg-violet-100 text-violet-700 border border-violet-200; }
+.badge-cdd { @apply bg-amber-100 text-amber-700 border border-amber-200; }
+.badge-extra { @apply bg-blue-100 text-blue-700 border border-blue-200; }
+.badge-interim { @apply bg-orange-100 text-orange-700 border border-orange-200; }
+.badge-stage { @apply bg-cyan-100 text-cyan-700 border border-cyan-200; }
+.badge-apprentissage { @apply bg-pink-100 text-pink-700 border border-pink-200; }
+
+/* Status Badges */
+.badge-actif { @apply bg-emerald-100 text-emerald-700; }
+.badge-inactif { @apply bg-slate-100 text-slate-500; }
+
+/* Shift Type Colors for Planning Grid */
+.shift-matin { @apply bg-orange-100 text-orange-700 border-orange-200; }
+.shift-soir { @apply bg-blue-100 text-blue-700 border-blue-200; }
+.shift-nuit { @apply bg-violet-100 text-violet-700 border-violet-200; }
+.shift-repos { @apply bg-slate-100 text-slate-500 border-slate-200; }
+.shift-off { @apply bg-slate-50 text-slate-400 border-slate-200; }
+.shift-conge { @apply bg-emerald-100 text-emerald-700 border-emerald-200; }
+.shift-maladie { @apply bg-red-100 text-red-700 border-red-200; }
+.shift-ferie { @apply bg-purple-100 text-purple-700 border-purple-200; }
+
+/* Staff Planning Cell Styles */
+.planning-cell {
+  @apply min-h-[40px] min-w-[50px] border-r border-b border-slate-100 p-0.5 text-center align-middle;
+}
+.planning-cell-header {
+  @apply font-semibold text-xs text-slate-600 bg-slate-50 p-2 text-center border-r border-b border-slate-200;
+}
+.planning-cell-weekend {
+  @apply bg-slate-50/50;
+}
+.planning-cell-today {
+  @apply bg-violet-50/70;
+}
+.planning-cell-holiday {
+  @apply bg-purple-50/70;
+}
+
+/* Shift Badge in Cell */
+.shift-badge {
+  @apply inline-flex items-center justify-center w-8 h-6 text-xs font-semibold rounded;
+}
+
+/* Navigation Styles */
+.nav-item {
+  @apply relative px-3 py-2 text-sm font-medium text-slate-500 transition-colors flex items-center gap-1.5;
+}
+.nav-item:hover { @apply text-slate-900; }
+.nav-item.active { @apply text-violet-600; }
+.nav-item.active::after {
+  content: '';
+  @apply absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-violet-600 rounded-t;
+}
+
+/* Sub Navigation Tabs */
+.subnav-tab {
+  @apply flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-all;
+}
+.subnav-tab-inactive {
+  @apply text-slate-500 hover:text-slate-700 hover:bg-white/60;
+}
+.subnav-tab-active {
+  @apply bg-white text-violet-700 shadow-sm border border-slate-200;
+}
+
+/* Employee Card (Trombinoscope) */
+.employee-card {
+  @apply bg-white rounded-xl border border-slate-200 p-5 transition-all duration-200 hover:shadow-md hover:border-slate-300 cursor-pointer;
+}
+.employee-avatar {
+  @apply w-14 h-14 rounded-full bg-gradient-to-br from-violet-500 to-violet-600 flex items-center justify-center text-white font-semibold text-lg shadow-sm;
+}
+.employee-avatar-sm {
+  @apply w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-violet-600 flex items-center justify-center text-white font-medium text-xs;
+}
+
+/* Modal/Overlay */
+.modal-overlay {
+  @apply fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4;
+}
+.modal-content {
+  @apply bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden;
+}
+.modal-header {
+  @apply bg-gradient-to-r from-violet-600 to-violet-700 text-white px-6 py-4;
+}
+
+/* Table Styles */
+.table-row-hover:hover {
+  @apply bg-slate-50/80;
+}
+.table-header {
+  @apply text-xs font-semibold text-slate-500 uppercase tracking-wider;
+}
+
+/* Form Wizard Steps */
+.wizard-step {
+  @apply flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold transition-all;
+}
+.wizard-step-active {
+  @apply bg-violet-600 text-white;
+}
+.wizard-step-completed {
+  @apply bg-emerald-500 text-white;
+}
+.wizard-step-pending {
+  @apply bg-slate-200 text-slate-500;
+}
+.wizard-connector {
+  @apply flex-1 h-0.5 mx-2;
+}
+.wizard-connector-active {
+  @apply bg-violet-600;
+}
+.wizard-connector-pending {
+  @apply bg-slate-200;
+}
+
+/* KPI Cards */
+.kpi-card {
+  @apply bg-white border border-slate-200 rounded-xl p-5 transition-all hover:shadow-sm;
+}
+.kpi-value {
+  @apply text-2xl font-bold text-slate-900;
+}
+.kpi-label {
+  @apply text-sm text-slate-500 mt-1;
+}
+
+/* Action Buttons */
+.btn-primary {
+  @apply bg-violet-600 hover:bg-violet-700 text-white font-medium px-4 py-2 rounded-lg transition-colors;
+}
+.btn-secondary {
+  @apply bg-white hover:bg-slate-50 text-slate-700 font-medium px-4 py-2 rounded-lg border border-slate-200 transition-colors;
+}
+.btn-ghost {
+  @apply hover:bg-slate-100 text-slate-600 font-medium px-4 py-2 rounded-lg transition-colors;
+}
+
+/* Status Dot */
+.status-dot {
+  @apply w-2 h-2 rounded-full;
+}
+.status-dot-active {
+  @apply bg-emerald-500;
+}
+.status-dot-inactive {
+  @apply bg-slate-300;
+}
+
+/* Filter/Search Bar */
+.filter-bar {
+  @apply flex items-center gap-3 bg-white rounded-lg border border-slate-200 px-4 py-2;
+}
+
+/* Reservation bar styles (PMS) */
+.reservation-bar {
+  @apply absolute h-8 rounded flex items-center px-2 text-xs font-medium cursor-pointer transition-all z-10 overflow-hidden whitespace-nowrap;
+}
+.reservation-bar:hover {
+  @apply scale-[1.02] shadow-lg z-20;
+}
+
+/* Channel colors */
+.channel-direct { @apply bg-emerald-500 text-white; }
+.channel-booking_com { @apply bg-[#003580] text-white; }
+.channel-expedia { @apply bg-[#FFB300] text-slate-900; }
+.channel-airbnb { @apply bg-[#FF5A5F] text-white; }
+.channel-other { @apply bg-slate-500 text-white; }
+
+/* Status badges (PMS) */
+.status-badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+.status-pending { @apply bg-amber-100 text-amber-700; }
+.status-confirmed { @apply bg-blue-100 text-blue-700; }
+.status-checked_in { @apply bg-emerald-100 text-emerald-700; }
+.status-checked_out { @apply bg-slate-100 text-slate-600; }
+.status-cancelled { @apply bg-red-100 text-red-700; }
+.status-no_show { @apply bg-pink-100 text-pink-700; }
+
+/* Spinner */
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Hide scrollbar */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Focus styles */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2;
+}

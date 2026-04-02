@@ -1,0 +1,505 @@
+/**
+ * FLOWTYM DESIGN SYSTEM - GLOBAL OVERRIDES
+ * Application des tokens premium à tous les composants existants
+ * Version 1.0
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════
+   IMPORT FONT INTER
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ═══════════════════════════════════════════════════════════════════════
+   GLOBAL APP STYLES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+#root {
+  min-height: 100vh;
+  background: var(--ft-bg);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   TOP NAVIGATION OVERRIDE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+header {
+  background: #FFFFFF !important;
+  border-bottom: 1px solid #F3F4F6 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Logo */
+.logo, [class*="logo"], span[class*="FLOW"] {
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+}
+
+/* Navigation links */
+nav button, nav a, [data-testid*="nav-"] {
+  font-family: var(--ft-font-family) !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+  letter-spacing: -0.01em !important;
+  color: #6B7280 !important;
+  transition: all 0.15s ease !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+}
+
+nav button:hover, nav a:hover, [data-testid*="nav-"]:hover {
+  color: #1F2937 !important;
+  background: #F8F9FC !important;
+}
+
+/* Active nav item */
+nav button[class*="text-violet"], 
+nav a[class*="text-violet"],
+[data-testid*="nav-"][class*="active"],
+[data-testid*="nav-"][class*="text-violet"] {
+  color: #6C5CE7 !important;
+  background: #F5F4FE !important;
+  font-weight: 600 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SIDEBAR OVERRIDE (si présent)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Sidebar override - exclude Super Admin and Support Agent sidebars */
+aside:not([data-admin-sidebar]):not([data-support-sidebar]), [class*="sidebar"]:not([data-admin-sidebar]):not([data-support-sidebar]), .sidebar:not([data-admin-sidebar]):not([data-support-sidebar]) {
+  background: var(--ft-card) !important;
+  border-right: 1px solid var(--ft-border-light) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SHADCN/UI BUTTON OVERRIDE - VIOLET AVEC TEXTE BLANC LISIBLE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+button[class*="bg-violet"], 
+button[class*="bg-primary"],
+.btn-primary,
+[data-slot="button"][class*="primary"],
+button.bg-violet-600,
+button.bg-violet-700,
+.bg-violet-600,
+.bg-violet-700 {
+  background: #A855F7 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 14px rgba(168, 85, 247, 0.35) !important;
+  border: none !important;
+  font-weight: 500 !important;
+  border-radius: 12px !important;
+  transition: all 0.15s ease !important;
+}
+
+button[class*="bg-violet"]:hover:not(:disabled),
+button[class*="bg-primary"]:hover:not(:disabled),
+.bg-violet-600:hover,
+.bg-violet-700:hover {
+  background: #9333EA !important;
+  color: #FFFFFF !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.45) !important;
+}
+
+/* Force le texte blanc sur tous les boutons violets */
+button[class*="bg-violet"] *,
+button[class*="bg-primary"] *,
+.btn-primary *,
+.bg-violet-600 *,
+.bg-violet-700 * {
+  color: #FFFFFF !important;
+}
+
+/* Override pour les boutons avec classe text-white */
+.bg-violet-600.text-white,
+.bg-violet-700.text-white,
+button.bg-violet-600,
+button.bg-violet-700 {
+  color: #FFFFFF !important;
+}
+
+/* Secondary buttons */
+button[class*="variant-outline"],
+button[class*="border-slate"],
+button[class*="bg-slate-50"] {
+  background: var(--ft-bg) !important;
+  border: 1px solid var(--ft-border) !important;
+  color: var(--ft-text-primary) !important;
+}
+
+button[class*="variant-outline"]:hover,
+button[class*="border-slate"]:hover {
+  background: var(--ft-border-light) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SHADCN/UI CARD OVERRIDE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* All cards */
+[class*="rounded-lg"][class*="border"],
+[class*="rounded-xl"][class*="border"],
+.card,
+[data-slot="card"],
+[class*="bg-white"][class*="rounded"],
+[class*="border-slate"] {
+  background: #FFFFFF !important;
+  border: 1px solid #F3F4F6 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.2s ease !important;
+}
+
+[class*="rounded-lg"][class*="border"]:hover,
+[class*="rounded-xl"][class*="border"]:hover,
+[class*="bg-white"][class*="rounded"]:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Card headers */
+[class*="CardHeader"], .card-header {
+  border-bottom: 1px solid #F3F4F6 !important;
+  padding-bottom: 12px !important;
+  margin-bottom: 16px !important;
+}
+
+/* Card titles */
+[class*="CardTitle"], .card-title, h3[class*="font-semibold"] {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: #1F2937 !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SHADCN/UI INPUT OVERRIDE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+input[class*="border"],
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="number"],
+textarea,
+[data-slot="input"] {
+  font-family: var(--ft-font-family) !important;
+  font-size: var(--ft-text-sm) !important;
+  border: 1px solid var(--ft-border) !important;
+  border-radius: var(--ft-radius-md) !important;
+  transition: all var(--ft-transition-fast) !important;
+}
+
+input:focus, textarea:focus {
+  border-color: var(--ft-primary) !important;
+  box-shadow: 0 0 0 3px var(--ft-primary-soft) !important;
+  outline: none !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--ft-text-muted) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SHADCN/UI SELECT OVERRIDE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+[data-slot="select-trigger"],
+button[role="combobox"],
+[class*="SelectTrigger"] {
+  font-family: var(--ft-font-family) !important;
+  font-size: var(--ft-text-sm) !important;
+  border: 1px solid var(--ft-border) !important;
+  border-radius: var(--ft-radius-md) !important;
+  background: var(--ft-card) !important;
+}
+
+[data-slot="select-content"],
+[class*="SelectContent"] {
+  border-radius: var(--ft-radius-lg) !important;
+  box-shadow: var(--ft-shadow-lg) !important;
+  border: 1px solid var(--ft-border-light) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SHADCN/UI BADGE OVERRIDE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+[class*="Badge"],
+.badge,
+span[class*="rounded-full"][class*="px-"],
+span[class*="rounded-lg"][class*="px-"][class*="py-"] {
+  font-family: var(--ft-font-family) !important;
+  font-size: var(--ft-text-xs) !important;
+  font-weight: var(--ft-font-medium) !important;
+  border-radius: var(--ft-radius-full) !important;
+}
+
+/* Status badges */
+[class*="bg-green"], .badge-success {
+  background: var(--ft-success-soft) !important;
+  color: var(--ft-success) !important;
+}
+
+[class*="bg-red"], .badge-danger {
+  background: var(--ft-danger-soft) !important;
+  color: var(--ft-danger) !important;
+}
+
+[class*="bg-amber"], [class*="bg-yellow"], .badge-warning {
+  background: var(--ft-warning-soft) !important;
+  color: var(--ft-warning) !important;
+}
+
+[class*="bg-blue"], .badge-info {
+  background: var(--ft-info-soft) !important;
+  color: var(--ft-info) !important;
+}
+
+[class*="bg-violet"], [class*="bg-purple"], .badge-primary {
+  background: var(--ft-primary-soft) !important;
+  color: var(--ft-primary) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   TABLE PREMIUM OVERRIDE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+table {
+  font-family: var(--ft-font-family) !important;
+}
+
+table thead {
+  background: var(--ft-bg) !important;
+}
+
+table th {
+  font-size: var(--ft-text-xs) !important;
+  font-weight: var(--ft-font-medium) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  color: var(--ft-text-secondary) !important;
+  padding: var(--ft-space-3) var(--ft-space-4) !important;
+  border-bottom: 1px solid var(--ft-border) !important;
+}
+
+table td {
+  font-size: var(--ft-text-sm) !important;
+  color: var(--ft-text-primary) !important;
+  padding: var(--ft-space-3) var(--ft-space-4) !important;
+  border-bottom: 1px solid var(--ft-border-light) !important;
+}
+
+table tbody tr {
+  transition: background var(--ft-transition-fast) !important;
+}
+
+table tbody tr:hover {
+  background: var(--ft-bg) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   DIALOG / MODAL OVERRIDE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+[role="dialog"],
+[data-slot="dialog-content"],
+[class*="DialogContent"] {
+  border-radius: var(--ft-radius-xl) !important;
+  box-shadow: var(--ft-shadow-modal) !important;
+  border: 1px solid var(--ft-border-light) !important;
+}
+
+[data-slot="dialog-overlay"],
+[class*="DialogOverlay"] {
+  background: rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   DROPDOWN MENU OVERRIDE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+[role="menu"],
+[data-slot="dropdown-content"],
+[class*="DropdownMenuContent"] {
+  border-radius: var(--ft-radius-lg) !important;
+  box-shadow: var(--ft-shadow-lg) !important;
+  border: 1px solid var(--ft-border-light) !important;
+  padding: var(--ft-space-1) !important;
+}
+
+[role="menuitem"] {
+  border-radius: var(--ft-radius-md) !important;
+  font-size: var(--ft-text-sm) !important;
+  transition: background var(--ft-transition-fast) !important;
+}
+
+[role="menuitem"]:hover {
+  background: var(--ft-bg) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   TOAST / SONNER OVERRIDE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+[data-sonner-toast],
+[class*="toast"] {
+  font-family: var(--ft-font-family) !important;
+  border-radius: var(--ft-radius-lg) !important;
+  box-shadow: var(--ft-shadow-lg) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CHECKBOX & RADIO OVERRIDE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+[role="checkbox"],
+input[type="checkbox"] {
+  border-radius: var(--ft-radius-sm) !important;
+  border: 1px solid var(--ft-border) !important;
+  transition: all var(--ft-transition-fast) !important;
+}
+
+[role="checkbox"][data-state="checked"],
+input[type="checkbox"]:checked {
+  background: var(--ft-primary) !important;
+  border-color: var(--ft-primary) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PROGRESS BAR OVERRIDE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+[role="progressbar"],
+.progress-bar,
+[class*="Progress"] {
+  border-radius: var(--ft-radius-full) !important;
+  background: var(--ft-border-light) !important;
+}
+
+[role="progressbar"] > div,
+.progress-bar > div {
+  background: var(--ft-primary-gradient) !important;
+  border-radius: var(--ft-radius-full) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   TABS OVERRIDE
+   ═══════════════════════════════════════════════════════════════════════ */
+
+[role="tablist"] {
+  background: var(--ft-bg) !important;
+  border-radius: var(--ft-radius-lg) !important;
+  padding: var(--ft-space-1) !important;
+}
+
+[role="tab"] {
+  font-family: var(--ft-font-family) !important;
+  font-size: var(--ft-text-sm) !important;
+  font-weight: var(--ft-font-medium) !important;
+  border-radius: var(--ft-radius-md) !important;
+  transition: all var(--ft-transition-fast) !important;
+}
+
+[role="tab"][data-state="active"],
+[role="tab"][aria-selected="true"] {
+  background: var(--ft-card) !important;
+  box-shadow: var(--ft-shadow-sm) !important;
+  color: var(--ft-text-primary) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SCROLLBAR STYLING
+   ═══════════════════════════════════════════════════════════════════════ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ft-border);
+  border-radius: var(--ft-radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ft-text-muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   LOADING STATES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.loading-spinner,
+[class*="animate-spin"] {
+  color: var(--ft-primary) !important;
+}
+
+/* Skeleton loading */
+[class*="skeleton"],
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--ft-border-light) 25%,
+    var(--ft-bg) 50%,
+    var(--ft-border-light) 75%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: skeleton-loading 1.5s infinite !important;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SPECIFIC MODULE OVERRIDES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Housekeeping Module */
+[data-testid*="housekeeping"],
+[data-testid*="hk-"] {
+  font-family: var(--ft-font-family) !important;
+}
+
+/* E-Reputation Module (iframe handled separately) */
+
+/* Channel Manager */
+[class*="channel"] {
+  font-family: var(--ft-font-family) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   HOVER & FOCUS STATES GLOBAL
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Interactive elements */
+button, a, [role="button"], [tabindex="0"] {
+  transition: all var(--ft-transition-fast) !important;
+}
+
+/* Focus visible for accessibility */
+:focus-visible {
+  outline: 2px solid var(--ft-primary) !important;
+  outline-offset: 2px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   RESPONSIVE ADJUSTMENTS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  :root {
+    --ft-text-3xl: 24px;
+    --ft-text-2xl: 20px;
+    --ft-space-6: 20px;
+  }
+}

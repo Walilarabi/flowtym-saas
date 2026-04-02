@@ -1,0 +1,655 @@
+/**
+ * FLOWTYM DESIGN SYSTEM - PREMIUM TOKENS
+ * Style Kleon-inspired, ultra-moderne, hôtellerie haut de gamme
+ * Version 1.0
+ */
+
+:root {
+  /* ═══════════════════════════════════════════════════════════════
+     COULEURS PRINCIPALES
+     ═══════════════════════════════════════════════════════════════ */
+  
+  /* Violet primaire - Signature Flowtym */
+  --ft-primary: #6C5CE7;
+  --ft-primary-light: #A29BFE;
+  --ft-primary-dark: #5B4ED1;
+  --ft-primary-soft: #F5F4FE;
+  --ft-primary-gradient: linear-gradient(135deg, #6C5CE7, #A29BFE);
+  
+  /* Couleurs fonctionnelles (adoucies) */
+  --ft-success: #22C55E;
+  --ft-success-soft: #DCFCE7;
+  --ft-danger: #EF4444;
+  --ft-danger-soft: #FEE2E2;
+  --ft-warning: #F59E0B;
+  --ft-warning-soft: #FEF3C7;
+  --ft-info: #3B82F6;
+  --ft-info-soft: #DBEAFE;
+  
+  /* Fonds */
+  --ft-bg: #F8F9FC;
+  --ft-bg-elevated: #FFFFFF;
+  --ft-card: #FFFFFF;
+  
+  /* Textes */
+  --ft-text-primary: #1F2937;
+  --ft-text-secondary: #6B7280;
+  --ft-text-muted: #9CA3AF;
+  --ft-text-inverse: #FFFFFF;
+  
+  /* Bordures */
+  --ft-border: #E5E7EB;
+  --ft-border-light: #F3F4F6;
+  --ft-border-focus: #6C5CE7;
+  
+  /* ═══════════════════════════════════════════════════════════════
+     TYPOGRAPHIE - INTER UNIQUEMENT
+     ═══════════════════════════════════════════════════════════════ */
+  
+  --ft-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  
+  /* Tailles */
+  --ft-text-xs: 12px;
+  --ft-text-sm: 13px;
+  --ft-text-base: 14px;
+  --ft-text-md: 16px;
+  --ft-text-lg: 18px;
+  --ft-text-xl: 20px;
+  --ft-text-2xl: 24px;
+  --ft-text-3xl: 28px;
+  
+  /* Poids */
+  --ft-font-normal: 400;
+  --ft-font-medium: 500;
+  --ft-font-semibold: 600;
+  --ft-font-bold: 700;
+  
+  /* Line height */
+  --ft-leading-tight: 1.25;
+  --ft-leading-normal: 1.5;
+  --ft-leading-relaxed: 1.6;
+  
+  /* Letter spacing */
+  --ft-tracking-tight: -0.02em;
+  --ft-tracking-normal: -0.01em;
+  
+  /* ═══════════════════════════════════════════════════════════════
+     ESPACEMENTS
+     ═══════════════════════════════════════════════════════════════ */
+  
+  --ft-space-1: 4px;
+  --ft-space-2: 8px;
+  --ft-space-3: 12px;
+  --ft-space-4: 16px;
+  --ft-space-5: 20px;
+  --ft-space-6: 24px;
+  --ft-space-8: 32px;
+  --ft-space-10: 40px;
+  --ft-space-12: 48px;
+  
+  /* ═══════════════════════════════════════════════════════════════
+     BORDER RADIUS
+     ═══════════════════════════════════════════════════════════════ */
+  
+  --ft-radius-sm: 6px;
+  --ft-radius-md: 8px;
+  --ft-radius-lg: 12px;
+  --ft-radius-xl: 16px;
+  --ft-radius-2xl: 20px;
+  --ft-radius-full: 9999px;
+  
+  /* ═══════════════════════════════════════════════════════════════
+     OMBRES PREMIUM (signature visuelle)
+     ═══════════════════════════════════════════════════════════════ */
+  
+  --ft-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --ft-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --ft-shadow-card: 0 4px 20px rgba(0, 0, 0, 0.04);
+  --ft-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.06);
+  --ft-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.08);
+  --ft-shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.12);
+  
+  /* Ombres colorées */
+  --ft-shadow-primary: 0 4px 20px rgba(108, 92, 231, 0.25);
+  --ft-shadow-success: 0 4px 12px rgba(34, 197, 94, 0.2);
+  --ft-shadow-danger: 0 4px 12px rgba(239, 68, 68, 0.2);
+  
+  /* ═══════════════════════════════════════════════════════════════
+     TRANSITIONS & ANIMATIONS
+     ═══════════════════════════════════════════════════════════════ */
+  
+  --ft-transition-fast: 0.15s ease;
+  --ft-transition-normal: 0.2s ease;
+  --ft-transition-slow: 0.3s ease;
+  --ft-transition-bounce: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  /* ═══════════════════════════════════════════════════════════════
+     Z-INDEX
+     ═══════════════════════════════════════════════════════════════ */
+  
+  --ft-z-dropdown: 100;
+  --ft-z-sticky: 200;
+  --ft-z-modal: 300;
+  --ft-z-toast: 400;
+  --ft-z-tooltip: 500;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   RESET & BASE STYLES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--ft-font-family);
+  font-size: var(--ft-text-base);
+  font-weight: var(--ft-font-normal);
+  line-height: var(--ft-leading-normal);
+  letter-spacing: var(--ft-tracking-normal);
+  color: var(--ft-text-primary);
+  background-color: var(--ft-bg);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   TYPOGRAPHY CLASSES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ft-h1 {
+  font-size: var(--ft-text-3xl);
+  font-weight: var(--ft-font-semibold);
+  line-height: var(--ft-leading-tight);
+  letter-spacing: var(--ft-tracking-tight);
+  color: var(--ft-text-primary);
+}
+
+.ft-h2 {
+  font-size: var(--ft-text-xl);
+  font-weight: var(--ft-font-medium);
+  line-height: var(--ft-leading-tight);
+  letter-spacing: var(--ft-tracking-tight);
+  color: var(--ft-text-primary);
+}
+
+.ft-h3 {
+  font-size: var(--ft-text-lg);
+  font-weight: var(--ft-font-medium);
+  line-height: var(--ft-leading-tight);
+  color: var(--ft-text-primary);
+}
+
+.ft-label {
+  font-size: var(--ft-text-sm);
+  font-weight: var(--ft-font-medium);
+  color: var(--ft-text-secondary);
+}
+
+.ft-body {
+  font-size: var(--ft-text-base);
+  font-weight: var(--ft-font-normal);
+  line-height: var(--ft-leading-relaxed);
+  color: var(--ft-text-primary);
+}
+
+.ft-small {
+  font-size: var(--ft-text-xs);
+  color: var(--ft-text-muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CARD COMPONENT
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ft-card {
+  background: var(--ft-card);
+  border-radius: var(--ft-radius-lg);
+  box-shadow: var(--ft-shadow-card);
+  border: 1px solid var(--ft-border-light);
+  padding: var(--ft-space-5);
+  transition: box-shadow var(--ft-transition-normal), transform var(--ft-transition-normal);
+}
+
+.ft-card:hover {
+  box-shadow: var(--ft-shadow-hover);
+}
+
+.ft-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--ft-space-4);
+  padding-bottom: var(--ft-space-3);
+  border-bottom: 1px solid var(--ft-border-light);
+}
+
+.ft-card-title {
+  font-size: var(--ft-text-md);
+  font-weight: var(--ft-font-semibold);
+  color: var(--ft-text-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   BUTTON COMPONENTS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ft-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ft-space-2);
+  padding: var(--ft-space-2) var(--ft-space-4);
+  font-family: var(--ft-font-family);
+  font-size: var(--ft-text-sm);
+  font-weight: var(--ft-font-medium);
+  line-height: 1;
+  border-radius: var(--ft-radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all var(--ft-transition-fast);
+  white-space: nowrap;
+}
+
+.ft-btn:focus-visible {
+  outline: 2px solid var(--ft-primary);
+  outline-offset: 2px;
+}
+
+.ft-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Primary Button */
+.ft-btn-primary {
+  background: var(--ft-primary-gradient);
+  color: var(--ft-text-inverse);
+  box-shadow: var(--ft-shadow-sm);
+}
+
+.ft-btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--ft-shadow-primary);
+}
+
+.ft-btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Secondary Button */
+.ft-btn-secondary {
+  background: var(--ft-bg);
+  color: var(--ft-text-primary);
+  border: 1px solid var(--ft-border);
+}
+
+.ft-btn-secondary:hover:not(:disabled) {
+  background: var(--ft-border-light);
+  border-color: var(--ft-border);
+}
+
+/* Ghost Button */
+.ft-btn-ghost {
+  background: transparent;
+  color: var(--ft-text-secondary);
+}
+
+.ft-btn-ghost:hover:not(:disabled) {
+  background: var(--ft-bg);
+  color: var(--ft-text-primary);
+}
+
+/* Danger Button */
+.ft-btn-danger {
+  background: var(--ft-danger);
+  color: var(--ft-text-inverse);
+}
+
+.ft-btn-danger:hover:not(:disabled) {
+  background: #DC2626;
+  box-shadow: var(--ft-shadow-danger);
+}
+
+/* Button Sizes */
+.ft-btn-sm {
+  padding: 6px 12px;
+  font-size: var(--ft-text-xs);
+}
+
+.ft-btn-lg {
+  padding: 12px 24px;
+  font-size: var(--ft-text-md);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   INPUT COMPONENTS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ft-input {
+  width: 100%;
+  padding: var(--ft-space-2) var(--ft-space-3);
+  font-family: var(--ft-font-family);
+  font-size: var(--ft-text-sm);
+  color: var(--ft-text-primary);
+  background: var(--ft-card);
+  border: 1px solid var(--ft-border);
+  border-radius: var(--ft-radius-md);
+  transition: all var(--ft-transition-fast);
+}
+
+.ft-input::placeholder {
+  color: var(--ft-text-muted);
+}
+
+.ft-input:hover:not(:disabled) {
+  border-color: var(--ft-text-muted);
+}
+
+.ft-input:focus {
+  outline: none;
+  border-color: var(--ft-primary);
+  box-shadow: 0 0 0 3px var(--ft-primary-soft);
+}
+
+.ft-input:disabled {
+  background: var(--ft-bg);
+  cursor: not-allowed;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   STATUS TAGS / BADGES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ft-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  font-size: var(--ft-text-xs);
+  font-weight: var(--ft-font-medium);
+  border-radius: var(--ft-radius-full);
+  white-space: nowrap;
+}
+
+.ft-tag-success {
+  background: var(--ft-success-soft);
+  color: var(--ft-success);
+}
+
+.ft-tag-danger {
+  background: var(--ft-danger-soft);
+  color: var(--ft-danger);
+}
+
+.ft-tag-warning {
+  background: var(--ft-warning-soft);
+  color: var(--ft-warning);
+}
+
+.ft-tag-info {
+  background: var(--ft-info-soft);
+  color: var(--ft-info);
+}
+
+.ft-tag-primary {
+  background: var(--ft-primary-soft);
+  color: var(--ft-primary);
+}
+
+.ft-tag-neutral {
+  background: var(--ft-bg);
+  color: var(--ft-text-secondary);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   TABLE PREMIUM
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ft-table-container {
+  background: var(--ft-card);
+  border-radius: var(--ft-radius-lg);
+  box-shadow: var(--ft-shadow-card);
+  overflow: hidden;
+  border: 1px solid var(--ft-border-light);
+}
+
+.ft-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--ft-text-sm);
+}
+
+.ft-table th {
+  padding: var(--ft-space-3) var(--ft-space-4);
+  text-align: left;
+  font-weight: var(--ft-font-medium);
+  font-size: var(--ft-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ft-text-secondary);
+  background: var(--ft-bg);
+  border-bottom: 1px solid var(--ft-border);
+}
+
+.ft-table td {
+  padding: var(--ft-space-3) var(--ft-space-4);
+  color: var(--ft-text-primary);
+  border-bottom: 1px solid var(--ft-border-light);
+  vertical-align: middle;
+}
+
+.ft-table tbody tr {
+  transition: background var(--ft-transition-fast);
+}
+
+.ft-table tbody tr:hover {
+  background: var(--ft-bg);
+}
+
+.ft-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Zebra rows subtle */
+.ft-table-striped tbody tr:nth-child(even) {
+  background: rgba(248, 249, 252, 0.5);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   KPI CARDS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ft-kpi {
+  background: var(--ft-card);
+  border-radius: var(--ft-radius-lg);
+  padding: var(--ft-space-5);
+  box-shadow: var(--ft-shadow-card);
+  border: 1px solid var(--ft-border-light);
+  position: relative;
+  overflow: hidden;
+}
+
+.ft-kpi::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--ft-primary-gradient);
+  opacity: 0;
+  transition: opacity var(--ft-transition-normal);
+}
+
+.ft-kpi:hover::before {
+  opacity: 1;
+}
+
+.ft-kpi-label {
+  font-size: var(--ft-text-xs);
+  font-weight: var(--ft-font-medium);
+  color: var(--ft-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--ft-space-2);
+}
+
+.ft-kpi-value {
+  font-size: var(--ft-text-3xl);
+  font-weight: var(--ft-font-bold);
+  color: var(--ft-text-primary);
+  letter-spacing: var(--ft-tracking-tight);
+  line-height: 1;
+}
+
+.ft-kpi-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: var(--ft-space-2);
+  font-size: var(--ft-text-xs);
+  font-weight: var(--ft-font-medium);
+}
+
+.ft-kpi-trend-up {
+  color: var(--ft-success);
+}
+
+.ft-kpi-trend-down {
+  color: var(--ft-danger);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   DROPDOWN / SELECT
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ft-select {
+  appearance: none;
+  background: var(--ft-card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 12px center;
+  padding: var(--ft-space-2) var(--ft-space-8) var(--ft-space-2) var(--ft-space-3);
+  font-size: var(--ft-text-sm);
+  border: 1px solid var(--ft-border);
+  border-radius: var(--ft-radius-md);
+  cursor: pointer;
+  transition: all var(--ft-transition-fast);
+}
+
+.ft-select:hover {
+  border-color: var(--ft-text-muted);
+}
+
+.ft-select:focus {
+  outline: none;
+  border-color: var(--ft-primary);
+  box-shadow: 0 0 0 3px var(--ft-primary-soft);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MODAL
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ft-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: var(--ft-z-modal);
+  animation: ft-fadeIn 0.2s ease;
+}
+
+.ft-modal {
+  background: var(--ft-card);
+  border-radius: var(--ft-radius-xl);
+  box-shadow: var(--ft-shadow-modal);
+  max-width: 500px;
+  width: 90%;
+  max-height: 85vh;
+  overflow: auto;
+  animation: ft-slideUp 0.3s ease;
+}
+
+.ft-modal-header {
+  padding: var(--ft-space-5);
+  border-bottom: 1px solid var(--ft-border-light);
+}
+
+.ft-modal-body {
+  padding: var(--ft-space-5);
+}
+
+.ft-modal-footer {
+  padding: var(--ft-space-4) var(--ft-space-5);
+  border-top: 1px solid var(--ft-border-light);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--ft-space-3);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@keyframes ft-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ft-slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ft-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   UTILITY CLASSES
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.ft-animate-pulse {
+  animation: ft-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.ft-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ft-gradient-text {
+  background: var(--ft-primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Hover lift effect */
+.ft-hover-lift {
+  transition: transform var(--ft-transition-fast), box-shadow var(--ft-transition-fast);
+}
+
+.ft-hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ft-shadow-hover);
+}
+
+/* Focus ring */
+.ft-focus-ring:focus-visible {
+  outline: 2px solid var(--ft-primary);
+  outline-offset: 2px;
+}
