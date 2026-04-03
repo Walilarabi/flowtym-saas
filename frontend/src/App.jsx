@@ -182,10 +182,12 @@ const AppRoutes = () => {
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-        <Toaster position="top-right" richColors closeButton />
-      </AuthProvider>
+      <I18nProvider>
+        <AuthProvider>
+          <AppRoutes />
+          <Toaster position="top-right" richColors closeButton />
+        </AuthProvider>
+      </I18nProvider>
     </BrowserRouter>
   )
 }

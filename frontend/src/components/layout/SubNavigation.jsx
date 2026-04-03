@@ -1,36 +1,38 @@
 import { NavLink, useLocation } from 'react-router-dom'
 import { Calendar, List, Users, LogIn, LogOut, Moon, BarChart3, Clock, FileText, Receipt, UsersRound, Settings, UserPlus, PieChart, LayoutDashboard, Euro } from 'lucide-react'
-
-const pmsSubNav = [
-  { label: 'Planning', icon: Calendar, path: '/pms/planning' },
-  { label: 'Reservations', icon: List, path: '/pms/reservations' },
-  { label: 'Clients', icon: Users, path: '/pms/clients' },
-  { label: 'Arrivees', icon: LogIn, path: '/pms/arrivals' },
-  { label: 'Departs', icon: LogOut, path: '/pms/departures' },
-  { label: 'Cloture', icon: Moon, path: '/pms/night-audit' },
-  { label: 'Rapports', icon: BarChart3, path: '/pms/reports' },
-]
-
-const staffSubNav = [
-  { label: 'Dashboard', icon: LayoutDashboard, path: '/staff/dashboard' },
-  { label: 'Planning', icon: Calendar, path: '/staff/planning' },
-  { label: 'Pointage', icon: Clock, path: '/staff/pointage' },
-  { label: 'Personnel', icon: UsersRound, path: '/staff/employees' },
-  { label: 'Contrats', icon: FileText, path: '/staff/contracts' },
-  { label: 'Paie & URSSAF', icon: Euro, path: '/staff/payroll' },
-  { label: 'Recrutement', icon: UserPlus, path: '/staff/recruitment' },
-  { label: 'Reporting', icon: PieChart, path: '/staff/reporting' },
-  { label: 'Configuration', icon: Settings, path: '/staff/configuration' },
-]
+import { useI18n } from '@/context/I18nContext'
 
 export const SubNavigation = () => {
   const location = useLocation()
-  
+  const { t } = useI18n()
+
+  const pmsSubNav = [
+    { label: t('pms.planning'),      icon: Calendar,    path: '/pms/planning' },
+    { label: t('pms.reservations'),  icon: List,        path: '/pms/reservations' },
+    { label: t('pms.clients'),       icon: Users,       path: '/pms/clients' },
+    { label: t('pms.arrivals'),      icon: LogIn,       path: '/pms/arrivals' },
+    { label: t('pms.departures'),    icon: LogOut,      path: '/pms/departures' },
+    { label: t('pms.nightaudit'),    icon: Moon,        path: '/pms/night-audit' },
+    { label: t('pms.reports'),       icon: BarChart3,   path: '/pms/reports' },
+  ]
+
+  const staffSubNav = [
+    { label: t('staff.dashboard'),   icon: LayoutDashboard, path: '/staff/dashboard' },
+    { label: t('staff.planning'),    icon: Calendar,        path: '/staff/planning' },
+    { label: t('staff.pointage'),    icon: Clock,           path: '/staff/pointage' },
+    { label: t('staff.employees'),   icon: UsersRound,      path: '/staff/employees' },
+    { label: t('staff.contracts'),   icon: FileText,        path: '/staff/contracts' },
+    { label: t('staff.payroll'),     icon: Euro,            path: '/staff/payroll' },
+    { label: t('staff.recruitment'), icon: UserPlus,        path: '/staff/recruitment' },
+    { label: t('staff.reporting'),   icon: PieChart,        path: '/staff/reporting' },
+    { label: t('staff.config'),      icon: Settings,        path: '/staff/configuration' },
+  ]
+
   const isPMS = location.pathname.startsWith('/pms')
   const isStaff = location.pathname.startsWith('/staff')
-  
+
   if (!isPMS && !isStaff) return null
-  
+
   const navItems = isPMS ? pmsSubNav : staffSubNav
 
   return (

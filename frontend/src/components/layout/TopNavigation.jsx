@@ -1,35 +1,41 @@
 import { NavLink, useLocation } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { useHotel } from '@/context/HotelContext'
+import { useI18n } from '@/context/I18nContext'
 import {
   LayoutDashboard, Building2, Network, TrendingUp, Star, Users, CalendarCheck,
   Brush, UsersRound, Wrench, Receipt, BarChart3, Code, Bell, Moon, ChevronDown,
-  LogOut, Settings, User, Check, Database, Cog, Link2, ClipboardList
+  LogOut, Settings, User, Check, Database, Cog, Link2, ClipboardList, Globe
 } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 
-const modules = [
-  { id: 'flowboard', label: 'Flowboard', icon: LayoutDashboard, path: '/flowboard', disabled: false },
-  { id: 'consignes', label: 'Consignes', icon: ClipboardList, path: '/consignes', disabled: false },
-  { id: 'pms', label: 'PMS', icon: Building2, path: '/pms/planning', disabled: false },
-  { id: 'channel', label: 'Channel', icon: Network, path: '/channel', disabled: false },
-  { id: 'rms', label: 'Hoptym', icon: TrendingUp, path: '/rms', disabled: false },
-  { id: 'ereputation', label: 'E-Reputation', icon: Star, path: '/e-reputation', disabled: false },
-  { id: 'crm', label: 'CRM', icon: Users, path: '/crm', disabled: false },
-  { id: 'booking', label: 'Booking', icon: CalendarCheck, path: '/booking', disabled: false },
-  { id: 'housekeeping', label: 'Housekeeping', icon: Brush, path: '/housekeeping', disabled: false },
-  { id: 'staff', label: 'Staff', icon: UsersRound, path: '/staff', disabled: false },
-  { id: 'rapports', label: 'Rapports', icon: BarChart3, path: '/pms/reports', disabled: false },
-  { id: 'datahub', label: 'Data Hub', icon: Database, path: '/datahub', disabled: false },
-  { id: 'integrations', label: 'Intégrations', icon: Link2, path: '/integrations', disabled: false },
-  { id: 'config', label: 'Configuration', icon: Cog, path: '/config', disabled: false },
-]
+const useModules = () => {
+  const { t } = useI18n()
+  return [
+    { id: 'flowboard',    label: t('nav.flowboard'),    icon: LayoutDashboard, path: '/flowboard',    disabled: false },
+    { id: 'consignes',    label: t('nav.consignes'),    icon: ClipboardList,   path: '/consignes',    disabled: false },
+    { id: 'pms',          label: t('nav.pms'),          icon: Building2,       path: '/pms/planning', disabled: false },
+    { id: 'channel',      label: t('nav.channel'),      icon: Network,         path: '/channel',      disabled: false },
+    { id: 'rms',          label: t('nav.rms'),          icon: TrendingUp,      path: '/rms',          disabled: false },
+    { id: 'ereputation',  label: t('nav.ereputation'),  icon: Star,            path: '/e-reputation', disabled: false },
+    { id: 'crm',          label: t('nav.crm'),          icon: Users,           path: '/crm',          disabled: false },
+    { id: 'booking',      label: t('nav.booking'),      icon: CalendarCheck,   path: '/booking',      disabled: false },
+    { id: 'housekeeping', label: t('nav.housekeeping'), icon: Brush,           path: '/housekeeping', disabled: false },
+    { id: 'staff',        label: t('nav.staff'),        icon: UsersRound,      path: '/staff',        disabled: false },
+    { id: 'rapports',     label: t('nav.rapports'),     icon: BarChart3,       path: '/pms/reports',  disabled: false },
+    { id: 'datahub',      label: t('nav.datahub'),      icon: Database,        path: '/datahub',      disabled: false },
+    { id: 'integrations', label: t('nav.integrations'), icon: Link2,           path: '/integrations', disabled: false },
+    { id: 'config',       label: t('nav.config'),       icon: Cog,             path: '/config',       disabled: false },
+  ]
+}
 
 export const TopNavigation = () => {
   const location = useLocation()
+  const { t, lang, setLang } = useI18n()
   const { user, logout } = useAuth()
   const { hotels, currentHotel, switchHotel } = useHotel()
+  const modules = useModules()
 
   const isActive = (path) => {
     if (path === '/pms/planning') return location.pathname.startsWith('/pms')
@@ -176,11 +182,33 @@ export const TopNavigation = () => {
               <User className="w-4 h-4 mr-2" />Mon profil
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer" style={{ borderRadius: '8px' }}>
-              <Settings className="w-4 h-4 mr-2" />Parametres
+              <Settings className="w-4 h-4 mr-2" />{t('action.save') === 'Save' ? 'Settings' : 'Paramètres'}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
+            {/* Sélecteur de langue */}
+            <div className="px-2 py-1.5">
+              <p className="text-xs font-medium text-slate-400 mb-1.5 flex items-center gap-1.5">
+                <Globe className="w-3 h-3" />{t('lang.label')}
+              </p>
+              <div className="flex gap-1.5">
+                {['fr', 'en'].map(l => (
+                  <button
+                    key={l}
+                    onClick={() => setLang(l)}
+                    className={`flex-1 py-1 rounded-lg text-xs font-bold transition-all ${
+                      lang === l
+                        ? 'bg-violet-600 text-white'
+                        : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                    }`}
+                  >
+                    {l === 'fr' ? '🇫🇷 FR' : '🇬🇧 EN'}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout} className="cursor-pointer" style={{ color: '#EF4444', borderRadius: '8px' }}>
-              <LogOut className="w-4 h-4 mr-2" />Deconnexion
+              <LogOut className="w-4 h-4 mr-2" />{t('action.logout')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
