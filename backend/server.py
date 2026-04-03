@@ -5215,8 +5215,123 @@ api_router.include_router(support_router)
 api_router.include_router(remote_access_router)
 api_router.include_router(consignes_router)
 
+# ── Groups & Séminaires + Simulation & Offres ─────────────────────────────────
+from groups.routes import groups_router
+
+def init_groups_db(database):
+    """Injecte la DB dans le module groups (pattern cohérent)."""
+    import groups.routes as gr
+    gr.groups_router.__db__ = database  # Non utilisé, la DB est passée via le scope app
+
+# Injection DB via dependency override (même pattern que les autres modules)
+@api_router.get("/hotels/{hotel_id}/groups", tags=["Groups & Séminaires"])
+async def list_groups_proxy(
+    hotel_id: str,
+    status: Optional[str] = None,
+    from_date: Optional[str] = None,
+    to_date: Optional[str] = None,
+    limit: int = Query(50, le=200),
+    offset: int = 0,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
+    from groups.routes import list_group_allocations
+    return await list_group_allocations(hotel_id, db, status, from_date, to_date, limit, offset, credentials)
+
+@api_router.post("/hotels/{hotel_id}/groups", tags=["Groups & Séminaires"])
+async def create_group_proxy(
+    hotel_id: str,
+    data,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
+    from groups.routes import GroupAllocationCreate, create_group_allocation
+    return await create_group_allocation(hotel_id, data, db, credentials)
+
+@api_router.get("/hotels/{hotel_id}/groups/stats", tags=["Groups & Séminaires"])
+async def groups_stats_proxy(hotel_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from groups.routes import get_groups_stats
+    return await get_groups_stats(hotel_id, db, credentials)
+
+@api_router.get("/hotels/{hotel_id}/groups/{group_id}", tags=["Groups & Séminaires"])
+async def get_group_proxy(hotel_id: str, group_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from groups.routes import get_group
+    return await get_group(hotel_id, group_id, db, credentials)
+
+@api_router.put("/hotels/{hotel_id}/groups/{group_id}", tags=["Groups & Séminaires"])
+async def update_group_proxy(hotel_id: str, group_id: str, data, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from groups.routes import GroupAllocationUpdate, update_group
+    return await update_group(hotel_id, group_id, data, db, credentials)
+
+@api_router.delete("/hotels/{hotel_id}/groups/{group_id}", tags=["Groups & Séminaires"])
+async def delete_group_proxy(hotel_id: str, group_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from groups.routes import delete_group
+    return await delete_group(hotel_id, group_id, db, credentials)
+
+@api_router.get("/hotels/{hotel_id}/groups/{group_id}/rooming-list", tags=["Groups & Séminaires"])
+async def get_rooming_proxy(hotel_id: str, group_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from groups.routes import get_rooming_list
+    return await get_rooming_list(hotel_id, group_id, db, credentials)
+
+@api_router.post("/hotels/{hotel_id}/groups/{group_id}/rooming-list", tags=["Groups & Séminaires"])
+async def add_rooming_proxy(hotel_id: str, group_id: str, entry, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from groups.routes import RoomingListEntry, add_rooming_entry
+    return await add_rooming_entry(hotel_id, group_id, entry, db, credentials)
+
+@api_router.delete("/hotels/{hotel_id}/groups/{group_id}/rooming-list/{entry_id}", tags=["Groups & Séminaires"])
+async def delete_rooming_proxy(hotel_id: str, group_id: str, entry_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from groups.routes import delete_rooming_entry
+    return await delete_rooming_entry(hotel_id, group_id, entry_id, db, credentials)
+
+# ── Quotes / Simulation & Offres ─────────────────────────────────────────────
+@api_router.get("/hotels/{hotel_id}/quotes", tags=["Simulation & Offres"])
+async def list_quotes_proxy(
+    hotel_id: str,
+    status: Optional[str] = None,
+    client_name: Optional[str] = None,
+    limit: int = Query(50, le=200),
+    offset: int = 0,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
+    from groups.routes import list_quotes
+    return await list_quotes(hotel_id, db, status, client_name, limit, offset, credentials)
+
+@api_router.post("/hotels/{hotel_id}/quotes", tags=["Simulation & Offres"])
+async def create_quote_proxy(hotel_id: str, data, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from groups.routes import QuoteCreate, create_quote
+    return await create_quote(hotel_id, data, db, credentials)
+
+@api_router.get("/hotels/{hotel_id}/quotes/stats", tags=["Simulation & Offres"])
+async def quotes_stats_proxy(hotel_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from groups.routes import get_quotes_stats
+    return await get_quotes_stats(hotel_id, db, credentials)
+
+@api_router.get("/hotels/{hotel_id}/quotes/{quote_id}", tags=["Simulation & Offres"])
+async def get_quote_proxy(hotel_id: str, quote_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from groups.routes import get_quote
+    return await get_quote(hotel_id, quote_id, db, credentials)
+
+@api_router.put("/hotels/{hotel_id}/quotes/{quote_id}", tags=["Simulation & Offres"])
+async def update_quote_proxy(hotel_id: str, quote_id: str, data, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from groups.routes import QuoteUpdate, update_quote
+    return await update_quote(hotel_id, quote_id, data, db, credentials)
+
+@api_router.post("/hotels/{hotel_id}/quotes/{quote_id}/send", tags=["Simulation & Offres"])
+async def send_quote_proxy(hotel_id: str, quote_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from groups.routes import send_quote
+    return await send_quote(hotel_id, quote_id, db, credentials)
+
+@api_router.post("/hotels/{hotel_id}/quotes/{quote_id}/convert", tags=["Simulation & Offres"])
+async def convert_quote_proxy(hotel_id: str, quote_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from groups.routes import convert_quote_to_reservation
+    return await convert_quote_to_reservation(hotel_id, quote_id, db, credentials)
+
+@api_router.post("/hotels/{hotel_id}/quotes/{quote_id}/duplicate", tags=["Simulation & Offres"])
+async def duplicate_quote_proxy(hotel_id: str, quote_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from groups.routes import duplicate_quote
+    return await duplicate_quote(hotel_id, quote_id, db, credentials)
+
 # Include the router in the main app
 app.include_router(api_router)
+
 
 app.add_middleware(
     CORSMiddleware,

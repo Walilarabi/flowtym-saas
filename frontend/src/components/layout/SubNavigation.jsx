@@ -12,6 +12,8 @@ export const SubNavigation = () => {
     { label: t('pms.clients'),       icon: Users,       path: '/pms/clients' },
     { label: t('pms.arrivals'),      icon: LogIn,       path: '/pms/arrivals' },
     { label: t('pms.departures'),    icon: LogOut,      path: '/pms/departures' },
+    { label: t('pms.groups'),        icon: UsersRound,  path: '/pms/groups' },
+    { label: t('pms.simulation'),    icon: FileText,    path: '/pms/simulation' },
     { label: t('pms.nightaudit'),    icon: Moon,        path: '/pms/night-audit' },
     { label: t('pms.reports'),       icon: BarChart3,   path: '/pms/reports' },
   ]

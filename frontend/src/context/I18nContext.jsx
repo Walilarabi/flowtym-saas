@@ -35,6 +35,8 @@ const translations = {
     'pms.clients':        'Clients',
     'pms.arrivals':       'Arrivées',
     'pms.departures':     'Départs',
+    'pms.groups':         'Groups & Séminaires',
+    'pms.simulation':     'Simulation & Offres',
     'pms.nightaudit':     'Clôture',
     'pms.reports':        'Rapports',
 
@@ -222,6 +224,8 @@ const translations = {
     'pms.clients':        'Guests',
     'pms.arrivals':       'Arrivals',
     'pms.departures':     'Departures',
+    'pms.groups':         'Groups & Events',
+    'pms.simulation':     'Quotes & Offers',
     'pms.nightaudit':     'Night Audit',
     'pms.reports':        'Reports',
 

@@ -39,6 +39,8 @@ import ConfigurationPage from '@/pages/config/ConfigurationPage'
 import HousekeepingModule from '@/pages/housekeeping/HousekeepingModule'
 import EReputationModule from '@/pages/ereputation/EReputationModule'
 import Flowboard from '@/pages/flowboard/Flowboard'
+import GroupsPage from '@/pages/GroupsPage'
+import SimulationPage from '@/pages/SimulationPage'
 import IntegrationsHub from '@/pages/integrations/IntegrationsHub'
 import MobilePointage from '@/pages/pointage/MobilePointage'
 import SatisfactionSurvey from '@/pages/public/SatisfactionSurvey'
@@ -113,6 +115,8 @@ const AppRoutes = () => {
                   <Route path="/pms/departures" element={<DeparturesPage />} />
                   <Route path="/pms/night-audit" element={<NightAuditPage />} />
                   <Route path="/pms/reports" element={<ReportsPage />} />
+                  <Route path="/pms/groups" element={<GroupsPage />} />
+                  <Route path="/pms/simulation" element={<SimulationPage />} />
                   {/* Staff Routes */}
                   <Route path="/staff" element={<Navigate to="/staff/dashboard" replace />} />
                   <Route path="/staff/dashboard" element={<StaffDashboard />} />
