@@ -5329,6 +5329,62 @@ async def duplicate_quote_proxy(hotel_id: str, quote_id: str, credentials: HTTPA
     from groups.routes import duplicate_quote
     return await duplicate_quote(hotel_id, quote_id, db, credentials)
 
+# ── Budget & Forecast + Dynamic Pricing ──────────────────────────────────────
+@api_router.get("/hotels/{hotel_id}/forecasts", tags=["Budget & Forecast"])
+async def list_forecasts_proxy(hotel_id: str, year: Optional[int] = None, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from forecast.routes import list_forecasts
+    return await list_forecasts(hotel_id, db, year, credentials)
+
+@api_router.get("/hotels/{hotel_id}/forecasts/stats", tags=["Budget & Forecast"])
+async def forecast_stats_proxy(hotel_id: str, year: Optional[int] = None, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from forecast.routes import get_forecast_stats
+    return await get_forecast_stats(hotel_id, db, year, credentials)
+
+@api_router.get("/hotels/{hotel_id}/forecasts/{year}/{month}", tags=["Budget & Forecast"])
+async def get_forecast_month_proxy(hotel_id: str, year: int, month: int, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from forecast.routes import get_forecast_month
+    return await get_forecast_month(hotel_id, year, month, db, credentials)
+
+@api_router.put("/hotels/{hotel_id}/forecasts/{year}/{month}", tags=["Budget & Forecast"])
+async def upsert_forecast_proxy(hotel_id: str, year: int, month: int, data, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from forecast.routes import ForecastUpdate, upsert_forecast
+    return await upsert_forecast(hotel_id, year, month, data, db, credentials)
+
+@api_router.post("/hotels/{hotel_id}/forecasts/generate", tags=["Budget & Forecast"])
+async def generate_forecast_proxy(hotel_id: str, params, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from forecast.routes import ForecastGenerate, generate_forecast
+    return await generate_forecast(hotel_id, params, db, credentials)
+
+@api_router.get("/hotels/{hotel_id}/forecasts/export", tags=["Budget & Forecast"])
+async def export_forecast_proxy(hotel_id: str, year: Optional[int] = None, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from forecast.routes import export_forecasts_csv
+    return await export_forecasts_csv(hotel_id, db, year, credentials)
+
+@api_router.get("/hotels/{hotel_id}/dynamic-pricing", tags=["Budget & Forecast"])
+async def list_pricing_rules_proxy(hotel_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from forecast.routes import list_pricing_rules
+    return await list_pricing_rules(hotel_id, db, credentials)
+
+@api_router.post("/hotels/{hotel_id}/dynamic-pricing", tags=["Budget & Forecast"])
+async def create_pricing_rule_proxy(hotel_id: str, rule, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from forecast.routes import DynamicPricingRule, create_pricing_rule
+    return await create_pricing_rule(hotel_id, rule, db, credentials)
+
+@api_router.put("/hotels/{hotel_id}/dynamic-pricing/{rule_id}", tags=["Budget & Forecast"])
+async def update_pricing_rule_proxy(hotel_id: str, rule_id: str, data, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from forecast.routes import DynamicPricingUpdate, update_pricing_rule
+    return await update_pricing_rule(hotel_id, rule_id, data, db, credentials)
+
+@api_router.delete("/hotels/{hotel_id}/dynamic-pricing/{rule_id}", tags=["Budget & Forecast"])
+async def delete_pricing_rule_proxy(hotel_id: str, rule_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from forecast.routes import delete_pricing_rule
+    return await delete_pricing_rule(hotel_id, rule_id, db, credentials)
+
+@api_router.post("/hotels/{hotel_id}/dynamic-pricing/simulate", tags=["Budget & Forecast"])
+async def simulate_pricing_proxy(hotel_id: str, request, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    from forecast.routes import SimulateRequest, simulate_pricing
+    return await simulate_pricing(hotel_id, request, db, credentials)
+
 # Include the router in the main app
 app.include_router(api_router)
 

@@ -41,6 +41,8 @@ import EReputationModule from '@/pages/ereputation/EReputationModule'
 import Flowboard from '@/pages/flowboard/Flowboard'
 import GroupsPage from '@/pages/GroupsPage'
 import SimulationPage from '@/pages/SimulationPage'
+import MaintenancePage from '@/pages/MaintenancePage'
+import ForecastPage from '@/pages/ForecastPage'
 import IntegrationsHub from '@/pages/integrations/IntegrationsHub'
 import MobilePointage from '@/pages/pointage/MobilePointage'
 import SatisfactionSurvey from '@/pages/public/SatisfactionSurvey'
@@ -117,6 +119,8 @@ const AppRoutes = () => {
                   <Route path="/pms/reports" element={<ReportsPage />} />
                   <Route path="/pms/groups" element={<GroupsPage />} />
                   <Route path="/pms/simulation" element={<SimulationPage />} />
+                  <Route path="/maintenance" element={<MaintenancePage />} />
+                  <Route path="/rms/forecast" element={<ForecastPage />} />
                   {/* Staff Routes */}
                   <Route path="/staff" element={<Navigate to="/staff/dashboard" replace />} />
                   <Route path="/staff/dashboard" element={<StaffDashboard />} />

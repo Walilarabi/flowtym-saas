@@ -6,8 +6,7 @@ import {
   LayoutDashboard, Building2, Network, TrendingUp, Star, Users, CalendarCheck,
   Brush, UsersRound, Wrench, Receipt, BarChart3, Code, Bell, Moon, ChevronDown,
   LogOut, Settings, User, Check, Database, Cog, Link2, ClipboardList, Globe
-} from 'lucide-react'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+} from 'lucide-react'import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 
 const useModules = () => {
@@ -22,6 +21,7 @@ const useModules = () => {
     { id: 'crm',          label: t('nav.crm'),          icon: Users,           path: '/crm',          disabled: false },
     { id: 'booking',      label: t('nav.booking'),      icon: CalendarCheck,   path: '/booking',      disabled: false },
     { id: 'housekeeping', label: t('nav.housekeeping'), icon: Brush,           path: '/housekeeping', disabled: false },
+    { id: 'maintenance',  label: t('nav.maintenance'),  icon: Wrench,          path: '/maintenance',  disabled: false },
     { id: 'staff',        label: t('nav.staff'),        icon: UsersRound,      path: '/staff',        disabled: false },
     { id: 'rapports',     label: t('nav.rapports'),     icon: BarChart3,       path: '/pms/reports',  disabled: false },
     { id: 'datahub',      label: t('nav.datahub'),      icon: Database,        path: '/datahub',      disabled: false },
@@ -47,6 +47,7 @@ export const TopNavigation = () => {
     if (path === '/datahub') return location.pathname.startsWith('/datahub')
     if (path === '/config') return location.pathname.startsWith('/config')
     if (path === '/housekeeping') return location.pathname.startsWith('/housekeeping')
+    if (path === '/maintenance') return location.pathname.startsWith('/maintenance')
     if (path === '/e-reputation') return location.pathname.startsWith('/e-reputation')
     if (path === '/flowboard') return location.pathname.startsWith('/flowboard')
     if (path === '/integrations') return location.pathname.startsWith('/integrations')
